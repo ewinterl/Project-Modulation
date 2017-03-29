@@ -16,6 +16,7 @@ import mac.OSXSetup;
 
 public class MainFrame extends JFrame {
 	// Panels
+	private JPanel contentPane;
 	private JPanel iconPanel = new JPanel(); // top left icon panel
 	private JPanel topPanel = new JPanel(); // top panel for controls
 	private JPanel leftPanel = new JPanel(); // left panel for functions
@@ -45,13 +46,14 @@ public class MainFrame extends JFrame {
 	private JButton buttonCosine = new JButton("Cosine");
 	private JButton buttonRect = new JButton("Rect");
 	
-	//Radio Button
+	//Radio Buttons
 	private JRadioButton rb_lowrange = new JRadioButton("1Hz - 100Hz");
 	private JRadioButton rb_midrange = new JRadioButton("100Hz - 10kHz");
 	private JRadioButton rb_highrange = new JRadioButton("10kHz - 1000kHz");
+	private JRadioButton rb_grid = new JRadioButton("grid on");
 	
 	// Slider
-	private JSlider jslid_freq = new JSlider(100, 1000, 100);
+	private JSlider jslid_freq = new JSlider(1000, 10000, 1000);
 	private JSlider jslid_ampl = new JSlider(2, 100, 100);
 
 	// Splitpanes
@@ -59,10 +61,14 @@ public class MainFrame extends JFrame {
 	JSplitPane sp_left = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	JSplitPane sp_right = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
-	private Drawing drawing = new Drawing();;
+	
+	private Drawing drawing = new Drawing();
+	
+	//Variables
 	private int mode = 0;
 	private int range = 0;
-	private JPanel contentPane;
+	private boolean grid_on = false;
+	
 
 	public MainFrame(String oS, String appTitle, String appVersion) {
 		OS = oS;
@@ -142,12 +148,14 @@ public class MainFrame extends JFrame {
 	    rb_lowrange.addActionListener(new RadioButtonListener());
 	    rb_midrange.addActionListener(new RadioButtonListener());
 	    rb_highrange.addActionListener(new RadioButtonListener());
+	    rb_grid.addActionListener(new RadioButtonListener());
 	    rb_lowrange.setSelected(true);
 	    topPanel.add(rb_lowrange);
 	    topPanel.add(jslid_freq);
 		topPanel.add(rb_midrange);
 		topPanel.add(jslid_ampl);
 		topPanel.add(rb_highrange);
+		topPanel.add(rb_grid);
 
 		// place Menu
 		setJMenuBar(menuBar);
@@ -227,12 +235,19 @@ public class MainFrame extends JFrame {
 			rb_midrange.setSelected(false);
 			range = 100;
 			redraw();
+		} else if (ae.getSource() == rb_grid) {
+			if(rb_grid.isSelected()){
+				grid_on = true;
+			} else{
+				grid_on = false;
+			}
+			redraw();
 		}
 	}
 
 	public void redraw() {
-		drawing.setParameter(mode, jslid_freq.getValue()*range, jslid_ampl.getValue());
-		double freq = Math.round(jslid_freq.getValue()*0.01)*range;
+		drawing.setParameter(mode, jslid_freq.getValue()*range, jslid_ampl.getValue(), grid_on);
+		//double freq = Math.round(jslid_freq.getValue()*0.01)*range;
 		// function_freq.setText(freq + " Hz");
 		// function_ampl.setText("Amplitude: " + jslid_ampl.getValue() / 100);
 		drawing.repaint();
