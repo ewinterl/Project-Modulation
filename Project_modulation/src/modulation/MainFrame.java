@@ -44,10 +44,15 @@ public class MainFrame extends JFrame {
 	private JButton buttonSine = new JButton("Sine");
 	private JButton buttonCosine = new JButton("Cosine");
 	private JButton buttonRect = new JButton("Rect");
-
+	
+	//Radio Button
+	private JRadioButton rb_lowrange = new JRadioButton("1Hz - 100Hz");
+	private JRadioButton rb_midrange = new JRadioButton("100Hz - 10kHz");
+	private JRadioButton rb_highrange = new JRadioButton("10kHz - 1000kHz");
+	
 	// Slider
-	private JSlider jslid_freq = new JSlider(1, 10000, 36);
-	private JSlider jslid_ampl = new JSlider(10, 100, 100);
+	private JSlider jslid_freq = new JSlider(100, 1000, 100);
+	private JSlider jslid_ampl = new JSlider(2, 100, 100);
 
 	// Splitpanes
 	JSplitPane sp_main = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
@@ -56,6 +61,7 @@ public class MainFrame extends JFrame {
 
 	private Drawing drawing = new Drawing();;
 	private int mode = 0;
+	private int range = 0;
 	private JPanel contentPane;
 
 	public MainFrame(String oS, String appTitle, String appVersion) {
@@ -99,8 +105,10 @@ public class MainFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout());
 		setMinimumSize(new Dimension(900, 600));
 		setTitle("Modulation Demo");
-
-		// Splitpanes
+		
+		
+		
+		// Splitpanes options
 		contentPane.add(sp_main, BorderLayout.CENTER);
 		sp_main.add(sp_left, JSplitPane.LEFT);
 		sp_main.add(sp_right, JSplitPane.RIGHT);
@@ -117,7 +125,7 @@ public class MainFrame extends JFrame {
 
 		// set layout
 		iconPanel.setLayout(new BorderLayout());
-		topPanel.setLayout(new GridLayout(4, 1));
+		topPanel.setLayout(new GridLayout(3, 2));
 		leftPanel.setLayout(new GridLayout(6, 1));
 
 		// left Panel options
@@ -131,8 +139,15 @@ public class MainFrame extends JFrame {
 		// top Panel options
 		jslid_freq.addChangeListener(new SliderListener());
 	    jslid_ampl.addChangeListener(new SliderListener());
-		topPanel.add(jslid_freq);
+	    rb_lowrange.addActionListener(new RadioButtonListener());
+	    rb_midrange.addActionListener(new RadioButtonListener());
+	    rb_highrange.addActionListener(new RadioButtonListener());
+	    rb_lowrange.setSelected(true);
+	    topPanel.add(rb_lowrange);
+	    topPanel.add(jslid_freq);
+		topPanel.add(rb_midrange);
 		topPanel.add(jslid_ampl);
+		topPanel.add(rb_highrange);
 
 		// place Menu
 		setJMenuBar(menuBar);
@@ -158,6 +173,8 @@ public class MainFrame extends JFrame {
 		// menu listener RT
 		Button_Listener_MenuThree mListenerRT = new Button_Listener_MenuThree();
 		menuItemInfoAbout.addActionListener(mListenerRT);
+		
+		redraw();
 	}
 
 	public class SliderListener implements ChangeListener {
@@ -187,10 +204,35 @@ public class MainFrame extends JFrame {
 			redraw();
 		}
 	}
+	
+	public class RadioButtonListener implements ActionListener {
+		public void actionPerformed(ActionEvent ae) {
+			RadioButtonHandler(ae);
+		}
+	}
+
+	public void RadioButtonHandler(ActionEvent ae) {
+		if (ae.getSource() == rb_lowrange) {
+			rb_midrange.setSelected(false);
+			rb_highrange.setSelected(false);
+			range = 1;
+			redraw();
+		} else if (ae.getSource() == rb_midrange) {
+			rb_lowrange.setSelected(false);
+			rb_highrange.setSelected(false);
+			range = 10;
+			redraw();
+		} else if (ae.getSource() == rb_highrange) {
+			rb_lowrange.setSelected(false);
+			rb_midrange.setSelected(false);
+			range = 100;
+			redraw();
+		}
+	}
 
 	public void redraw() {
-		drawing.setParameter(mode, jslid_freq.getValue(), jslid_ampl.getValue());
-		double freq = Math.round(jslid_freq.getValue() * 0.001 / 0.36 * 100) / 100.00;
+		drawing.setParameter(mode, jslid_freq.getValue()*range, jslid_ampl.getValue());
+		double freq = Math.round(jslid_freq.getValue()*0.01)*range;
 		// function_freq.setText(freq + " Hz");
 		// function_ampl.setText("Amplitude: " + jslid_ampl.getValue() / 100);
 		drawing.repaint();

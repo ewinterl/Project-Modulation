@@ -5,7 +5,7 @@ import java.awt.Graphics;
 
 public class Drawing extends Canvas {
 	int mode = 0;
-	double freq = 0.36;
+	double freq = 1;
 	double freqold = freq;
 	double amplitude = 1;
 	int nPoints = 1000;
@@ -99,14 +99,14 @@ public class Drawing extends Canvas {
 			xPoints[i] = translate_xpos(xPoint);
 			
 			if(mode == 0){												//calculate sinus
-				yPoint = (-amplitude)*Math.sin(((2*Math.PI)/360)*i*f);
+				yPoint = (-amplitude)*Math.sin(((2*Math.PI))*i*f);
 			} else if (mode == 1){										//calculate cosinus
-				yPoint = (-amplitude)*Math.cos(((2*Math.PI)/360)*i*f);
+				yPoint = (-amplitude)*Math.cos(((2*Math.PI))*i*f);
 			} else if (mode == 2){										//calculate rect
 				double buff = 0;
 				
-				for(int j = 1; j <= 10004; j = j+2){
-					yPoint += Math.sin(((j*2*Math.PI)/360)*i*f)/j;
+				for(int j = 1; j <= 10500; j = j+2){
+					yPoint += Math.sin(((j*2*Math.PI))*i*f)/j;
 				}
 				yPoint*= -amplitude;
 			}
@@ -126,7 +126,8 @@ public class Drawing extends Canvas {
 	
 	public void setParameter(int mode, int freq, int ampl){
 		this.mode = mode;
-		this.freq = freq*0.001;
+		this.freq = freq*0.01;
 		this.amplitude = ampl*0.01;
+		System.out.println(this.freq);
 	}
 }
