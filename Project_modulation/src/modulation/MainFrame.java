@@ -1,20 +1,31 @@
 package modulation;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSlider;
+import javax.swing.JSplitPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import Listeners.Button_Listener_MenuOne;
+import Listeners.Button_Listener_MenuMode;
 import Listeners.Button_Listener_MenuThree;
 import Listeners.Button_Listener_MenuTwo;
-import dialog.AboutDialog;
+import grapher.Screen;
 import mac.OSXSetup;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements ModeChanger {
 	// Panels
 	private JPanel contentPane;
 	private JPanel iconPanel = new JPanel(); // top left icon panel
@@ -23,17 +34,15 @@ public class MainFrame extends JFrame {
 
 	// Menu Bar
 	private JMenuBar menuBar = new JMenuBar();
+	
 	// Menu
-	private JMenu menuControl = new JMenu("Project");
+	private JMenu menuMode = new JMenu("Mode");
 	private JMenu menuLevel = new JMenu("Modulation");
 	private JMenu menuInfo = new JMenu("Help");
 
 	// Submenu
-	private JMenuItem menuItemControlResume = new JMenuItem("Whats");
-	private JMenuItem menuItemControlPause = new JMenuItem("up?");
-	private JCheckBoxMenuItem menuItemLevelEasy = new JCheckBoxMenuItem("Fu", true);
-	private JCheckBoxMenuItem menuItemLevelMedium = new JCheckBoxMenuItem("Ck");
-	private JCheckBoxMenuItem menuItemLevelHard = new JCheckBoxMenuItem("YOU");
+	private JCheckBoxMenuItem  menuItemModeMod = new JCheckBoxMenuItem ("Modulation", true);
+	private JCheckBoxMenuItem  menuItemModePlot = new JCheckBoxMenuItem ("Plotter");
 	private JMenuItem menuItemInfoAbout = new JMenuItem("lulz");
 
 	// App info
@@ -47,26 +56,28 @@ public class MainFrame extends JFrame {
 	private JButton buttonRect = new JButton("Rect");
 	
 	//Radio Buttons
-	private JRadioButton rb_lowrange = new JRadioButton("1Hz - 100Hz");
-	private JRadioButton rb_midrange = new JRadioButton("100Hz - 10kHz");
-	private JRadioButton rb_highrange = new JRadioButton("10kHz - 1000kHz");
+	private JRadioButton rb_lowrange = new JRadioButton("1Hz - 10Hz");
+	private JRadioButton rb_midrange = new JRadioButton("10Hz - 100Hz");
+	private JRadioButton rb_highrange = new JRadioButton("100Hz - 1kHz");
 	private JRadioButton rb_grid = new JRadioButton("grid on");
 	
 	// Slider
-	private JSlider jslid_freq = new JSlider(1000, 10000, 1000);
-	private JSlider jslid_ampl = new JSlider(2, 100, 100);
+	private JSlider jslid_freq = new JSlider(1, 10, 1);
+	private JSlider jslid_ampl = new JSlider(0, 100, 100);
 
 	// Splitpanes
 	JSplitPane sp_main = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 	JSplitPane sp_left = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	JSplitPane sp_right = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
-
 	
-	private Drawing drawing = new Drawing();
+	// Surroundings for Canvas
+	Screen mainCanvas;
 	
 	//Variables
 	private int mode = 0;
-	private int range = 0;
+	private int range = 1;
+	private int frequency = 1;
+	private double amplitude = 1;
 	private boolean grid_on = false;
 	
 
@@ -112,7 +123,7 @@ public class MainFrame extends JFrame {
 		setMinimumSize(new Dimension(900, 600));
 		setTitle("Modulation Demo");
 		
-		
+		mainCanvas = new Screen(this);
 		
 		// Splitpanes options
 		contentPane.add(sp_main, BorderLayout.CENTER);
@@ -125,7 +136,7 @@ public class MainFrame extends JFrame {
 		sp_left.setDividerLocation(getHeight() / 4);
 		sp_left.setEnabled(false);
 		sp_right.add(topPanel, JSplitPane.TOP);
-		sp_right.add(drawing, JSplitPane.BOTTOM);
+		sp_right.add(mainCanvas, JSplitPane.BOTTOM);
 		sp_right.setDividerLocation(getHeight() / 5);
 		sp_right.setEnabled(false);
 
@@ -146,6 +157,7 @@ public class MainFrame extends JFrame {
 		jslid_freq.addChangeListener(new SliderListener());
 	    jslid_ampl.addChangeListener(new SliderListener());
 	    rb_lowrange.addActionListener(new RadioButtonListener());
+	    rb_lowrange.setEnabled(true);
 	    rb_midrange.addActionListener(new RadioButtonListener());
 	    rb_highrange.addActionListener(new RadioButtonListener());
 	    rb_grid.addActionListener(new RadioButtonListener());
@@ -160,24 +172,18 @@ public class MainFrame extends JFrame {
 		// place Menu
 		setJMenuBar(menuBar);
 		// add Menu
-		menuBar.add(menuControl);
+		menuBar.add(menuMode);
 		menuBar.add(menuLevel);
 		menuBar.add(menuInfo);
 		// add Submenu
-		menuControl.add(menuItemControlResume);
-		menuControl.add(menuItemControlPause);
-		menuLevel.add(menuItemLevelEasy);
-		menuLevel.add(menuItemLevelMedium);
-		menuLevel.add(menuItemLevelHard);
+		menuMode.add(menuItemModeMod);
+		menuMode.add(menuItemModePlot);
 		// menu listener control
-		Button_Listener_MenuOne mListenerControl = new Button_Listener_MenuOne();
-		menuItemControlResume.addActionListener(mListenerControl);
-		menuItemControlPause.addActionListener(mListenerControl);
+		Button_Listener_MenuMode mListenerControl = new Button_Listener_MenuMode(menuItemModeMod, menuItemModePlot, this);
+		menuItemModeMod.addActionListener(mListenerControl);
+		menuItemModePlot.addActionListener(mListenerControl);
 		// menu listener control
 		Button_Listener_MenuTwo mListenerLevel = new Button_Listener_MenuTwo();
-		menuItemLevelEasy.addActionListener(mListenerLevel);
-		menuItemLevelMedium.addActionListener(mListenerLevel);
-		menuItemLevelHard.addActionListener(mListenerLevel);
 		// menu listener RT
 		Button_Listener_MenuThree mListenerRT = new Button_Listener_MenuThree();
 		menuItemInfoAbout.addActionListener(mListenerRT);
@@ -187,8 +193,21 @@ public class MainFrame extends JFrame {
 
 	public class SliderListener implements ChangeListener {
 		public void stateChanged(ChangeEvent e) {
+			if (e.getSource() == jslid_freq) {
+				frequency = jslid_freq.getValue();
+			} else {
+				amplitude = jslid_ampl.getValue()*0.01;
+			}
 			redraw();
 		}
+	}
+
+	public double getAmplitude() {
+		return amplitude;
+	}
+
+	public int getFrequency() {
+		return frequency*range;
 	}
 
 	public class ButtonListener implements ActionListener {
@@ -200,19 +219,23 @@ public class MainFrame extends JFrame {
 	public void ButtonHandler(ActionEvent ae) {
 		if (ae.getSource() == buttonSine) {
 			// function.setText("sinus");
-			mode = 0;
+			mode = 1;
 			redraw();
 		} else if (ae.getSource() == buttonCosine) {
 			// function.setText("cosinus");
-			mode = 1;
+			mode = 2;
 			redraw();
 		} else if (ae.getSource() == buttonRect) {
 			// function.setText("rect");
-			mode = 2;
+			mode = 3;
 			redraw();
 		}
 	}
 	
+	public int getMode() {
+		return mode;
+	}
+
 	public class RadioButtonListener implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
 			RadioButtonHandler(ae);
@@ -246,10 +269,16 @@ public class MainFrame extends JFrame {
 	}
 
 	public void redraw() {
-		drawing.setParameter(mode, jslid_freq.getValue()*range, jslid_ampl.getValue(), grid_on);
-		//double freq = Math.round(jslid_freq.getValue()*0.01)*range;
-		// function_freq.setText(freq + " Hz");
-		// function_ampl.setText("Amplitude: " + jslid_ampl.getValue() / 100);
-		drawing.repaint();
+		mainCanvas.repaint();
+	}
+
+	@Override
+	public void setMenu(Object Menu) {
+		if (Menu == menuItemModeMod) {
+			menuItemModePlot.setSelected(false);
+		} else if (Menu == menuItemModePlot) {
+			menuItemModeMod.setSelected(false);
+		}
+		
 	}
 }
