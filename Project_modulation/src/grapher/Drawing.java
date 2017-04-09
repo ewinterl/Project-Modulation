@@ -1,8 +1,10 @@
 package grapher;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 
 public class Drawing {
 	// Surrounding of the painting
@@ -76,40 +78,61 @@ public class Drawing {
 		g.drawLine(xpix0, ypix0, xpix1, ypix1);
 	}
 
-	public void draw_coord(Graphics g) {
+	public void draw_coord(Graphics2D g, boolean grid) {
 		double xPos;
 		double xMark;
 		double yMark;
-		
+
 		g.setColor(Color.black);
+		
+		g.setStroke(new BasicStroke(1));
 		
 		// draw the coordinate system
 		drawSingleLine(g, 0.0, ymax, 0.0, ymin);
 		drawSingleLine(g, xmin, 0.0, xmax, 0.0);
-		// draw the scaling marks
-		xMark = (xmax - xmin) / 200.0;
-		drawSingleLine(g, -xMark, 1.0, xMark, 1.0);
-		drawSingleLine(g, -xMark, 0.5, xMark, 0.5);
-		drawSingleLine(g, -xMark, -0.5, xMark, -0.5);
-		drawSingleLine(g, -xMark, -1.0, xMark, -1.0);
-		yMark = (ymax - ymin) / 100.0;
-		xPos = Math.PI / 2.0;
-		while (xPos < xmax) {
-			drawSingleLine(g, xPos, yMark, xPos, -yMark);
-			if (xPos > 6 && xPos < 7) { 
-				g.drawString("2π", xcoord_to_pixel(xPos)-10, ycoord_to_pixel(yMark-ymax/10));
+		
+		if (grid) {
+			// draw grid
+			xMark = (xmax - xmin) / 200.0;
+			drawSingleLine(g, -xMark, 1.0, xmax, 1.0);
+			drawSingleLine(g, -xMark, 0.5, xmax, 0.5);
+			drawSingleLine(g, -xMark, -0.5, xmax, -0.5);
+			drawSingleLine(g, -xMark, -1.0, xmax, -1.0);
+			yMark = (ymax - ymin) / 100.0;
+			xPos = Math.PI / 2.0;
+			while (xPos < xmax) {
+				drawSingleLine(g, xPos, ymin, xPos, ymax);
+				if (xPos > 6 && xPos < 7) { 
+					g.drawString("2π", xcoord_to_pixel(xPos)-10, ycoord_to_pixel(yMark-ymax/10));
+				}
+				xPos += Math.PI / 2;
 			}
-			xPos += Math.PI / 2;
+		} else {
+			// draw the scaling marks
+			xMark = (xmax - xmin) / 200.0;
+			drawSingleLine(g, -xMark, 1.0, xMark, 1.0);
+			drawSingleLine(g, -xMark, 0.5, xMark, 0.5);
+			drawSingleLine(g, -xMark, -0.5, xMark, -0.5);
+			drawSingleLine(g, -xMark, -1.0, xMark, -1.0);
+			yMark = (ymax - ymin) / 100.0;
+			xPos = Math.PI / 2.0;
+			while (xPos < xmax) {
+				drawSingleLine(g, xPos, yMark, xPos, -yMark);
+				if (xPos > 6 && xPos < 7) { 
+					g.drawString("2π", xcoord_to_pixel(xPos)-10, ycoord_to_pixel(yMark-ymax/10));
+				}
+				xPos += Math.PI / 2;
+			}
 		}
 	}
-	
+
 	// begin a new line
 	public void newLine() {
 		linestart = true;
 	}
 
 	// connect new point
-	public void nextLine(Graphics g, double x, double y) {
+	public void nextLine(Graphics2D g, double x, double y) {
 		int x_pix = xcoord_to_pixel(x);
 		int y_pix = ycoord_to_pixel(y);
 		if (x_pix >= 0 && y_pix >= 0) {  // only draw if point is valid
@@ -117,6 +140,7 @@ public class Drawing {
 			if (linestart) {
 				linestart = false;
 			} else {
+				g.setStroke(new BasicStroke(2));
 				g.drawLine(xLast, yLast, x_pix, y_pix);
 			}
 			xLast = x_pix;

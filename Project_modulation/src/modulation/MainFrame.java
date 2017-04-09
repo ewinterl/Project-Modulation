@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -31,6 +32,12 @@ public class MainFrame extends JFrame implements ModeChanger {
 	private JPanel iconPanel = new JPanel(); // top left icon panel
 	private JPanel topPanel = new JPanel(); // top panel for controls
 	private JPanel leftPanel = new JPanel(); // left panel for functions
+	private JPanel textPanel = new JPanel(); // lower panel for text output
+	
+	// Labels
+	private JLabel functionName = new JLabel();
+	private JLabel frequencyLabel = new JLabel();
+	private JLabel amplitudeLabel = new JLabel();
 
 	// Menu Bar
 	private JMenuBar menuBar = new JMenuBar();
@@ -76,7 +83,8 @@ public class MainFrame extends JFrame implements ModeChanger {
 	//Variables
 	private int mode = 0;
 	private int range = 1;
-	private int frequency = 1;
+	private int frequencyVal = 1;
+	private int frequency;
 	private double amplitude = 1;
 	private boolean grid_on = false;
 	
@@ -126,7 +134,6 @@ public class MainFrame extends JFrame implements ModeChanger {
 		mainCanvas = new Screen(this);
 		
 		// Splitpanes options
-		contentPane.add(sp_main, BorderLayout.CENTER);
 		sp_main.add(sp_left, JSplitPane.LEFT);
 		sp_main.add(sp_right, JSplitPane.RIGHT);
 		sp_main.setDividerLocation(150);
@@ -168,6 +175,12 @@ public class MainFrame extends JFrame implements ModeChanger {
 		topPanel.add(jslid_ampl);
 		topPanel.add(rb_highrange);
 		topPanel.add(rb_grid);
+		
+		// text panel options
+		textPanel.setLayout(new GridLayout(1,3));
+		textPanel.add(functionName);
+		textPanel.add(frequencyLabel);
+		textPanel.add(amplitudeLabel);
 
 		// place Menu
 		setJMenuBar(menuBar);
@@ -188,15 +201,20 @@ public class MainFrame extends JFrame implements ModeChanger {
 		Button_Listener_MenuThree mListenerRT = new Button_Listener_MenuThree();
 		menuItemInfoAbout.addActionListener(mListenerRT);
 		
-		redraw();
+		contentPane.add(sp_main, BorderLayout.CENTER);
+		contentPane.add(textPanel, BorderLayout.SOUTH);
+		
+		// draw a sine at start
+		buttonSine.doClick();
 	}
 
 	public class SliderListener implements ChangeListener {
 		public void stateChanged(ChangeEvent e) {
 			if (e.getSource() == jslid_freq) {
-				frequency = jslid_freq.getValue();
+				frequencyVal = jslid_freq.getValue();
+				
 			} else {
-				amplitude = jslid_ampl.getValue()*0.01;
+				amplitude =	jslid_ampl.getValue()/100.00;
 			}
 			redraw();
 		}
@@ -207,7 +225,7 @@ public class MainFrame extends JFrame implements ModeChanger {
 	}
 
 	public int getFrequency() {
-		return frequency*range;
+		return frequency;
 	}
 
 	public class ButtonListener implements ActionListener {
@@ -218,18 +236,16 @@ public class MainFrame extends JFrame implements ModeChanger {
 
 	public void ButtonHandler(ActionEvent ae) {
 		if (ae.getSource() == buttonSine) {
-			// function.setText("sinus");
+			functionName.setText("Function: sine");
 			mode = 1;
-			redraw();
 		} else if (ae.getSource() == buttonCosine) {
-			// function.setText("cosinus");
+			functionName.setText("Function: cosine");
 			mode = 2;
-			redraw();
 		} else if (ae.getSource() == buttonRect) {
-			// function.setText("rect");
+			functionName.setText("Function: rectangle");
 			mode = 3;
-			redraw();
 		}
+		redraw();
 	}
 	
 	public int getMode() {
@@ -247,28 +263,28 @@ public class MainFrame extends JFrame implements ModeChanger {
 			rb_midrange.setSelected(false);
 			rb_highrange.setSelected(false);
 			range = 1;
-			redraw();
 		} else if (ae.getSource() == rb_midrange) {
 			rb_lowrange.setSelected(false);
 			rb_highrange.setSelected(false);
 			range = 10;
-			redraw();
 		} else if (ae.getSource() == rb_highrange) {
 			rb_lowrange.setSelected(false);
 			rb_midrange.setSelected(false);
 			range = 100;
-			redraw();
 		} else if (ae.getSource() == rb_grid) {
 			if(rb_grid.isSelected()){
 				grid_on = true;
 			} else{
 				grid_on = false;
 			}
-			redraw();
 		}
+		redraw();
 	}
 
 	public void redraw() {
+		frequency = frequencyVal * range;
+		setAmplitudeLabel(amplitude);
+		setFrequencyLabel(frequency);
 		mainCanvas.repaint();
 	}
 
@@ -280,5 +296,17 @@ public class MainFrame extends JFrame implements ModeChanger {
 			menuItemModeMod.setSelected(false);
 		}
 		
+	}
+	
+	public void setAmplitudeLabel(double amplitude) {
+		amplitudeLabel.setText("Amplitude: " + amplitude);
+	}
+
+	public void setFrequencyLabel(int frequency) {
+		frequencyLabel.setText("Frequency: " + frequency + " Hz");
+	}
+	
+	public boolean isGrid_on() {
+		return grid_on;
 	}
 }
