@@ -30,6 +30,7 @@ public class Button_Listener_MenuMode implements ActionListener {
 		} else if (ae.getSource() == ItemPlot) {
 			mc.setMenu(ItemPlot);
 		}
+		mc.changeGUI();
 	}
 
 }

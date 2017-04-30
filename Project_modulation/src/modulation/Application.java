@@ -35,12 +35,14 @@ public class Application {
 	 */
 	public static void main(String[] args) {
 		String OS;
-		String title = "Reaction Tester";
-		String versionID = "Version 4.5.4";
+		String title = "Modulater";
+		String versionID = "Version x";
 		
 		// detect current OS
 		new OSUtils();
 		OS = OSUtils.getOsName().toLowerCase();
+		
+		
 		
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

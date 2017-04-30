@@ -1,6 +1,6 @@
 package mac;
 
-import java.awt.Frame;
+import javax.swing.ImageIcon;
 
 import com.apple.eawt.AboutHandler; 
 import com.apple.eawt.AppEvent.AboutEvent; 
@@ -33,7 +33,7 @@ public class OSXSetup {
 		
 		app.setPreferencesHandler(new PreferencesHandler() {
 			public void handlePreferences(PreferencesEvent pf) {
-				preferencesDialog.setVisible(true);;
+				preferencesDialog.setVisible(true);
 			}
 		});
 
@@ -41,8 +41,10 @@ public class OSXSetup {
 			public void handleAbout(AboutEvent ae) { 
 				aboutDialog.setVisible(true); 
 			} 
-		}); 
+		});
 		
+		app.setDockIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon.png")).getImage());
+		app.setDockIconBadge("Mod");	
 	}
 
 

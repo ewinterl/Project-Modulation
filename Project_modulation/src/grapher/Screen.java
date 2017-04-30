@@ -41,23 +41,24 @@ public class Screen extends Canvas {
 		graphCanvas.newLine();  // begin a new line
 		xval = 0.0;
 		
-		
-		
 		// selects the waveform
 		switch (mainFrame.getMode()) {
 		case 1:
 			while (xval <= XMAX - DELTAX) {
-				yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
-				System.out.println("amp " + mainFrame.getAmplitude());
+				if (mainFrame.isModulate()) {
+					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude()*Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude()*Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+				} else {
+					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+				}
 				graphCanvas.nextLine(g, xval, yval);
-				xval = xval + DELTAX;
+				xval += DELTAX;
 			}
 			break;
 		case 2:
 			while (xval <= XMAX - DELTAX) {
 				yval = Math.cos(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
 				graphCanvas.nextLine(g, xval, yval);
-				xval = xval + DELTAX;
+				xval += DELTAX;
 			}
 			break;
 		}

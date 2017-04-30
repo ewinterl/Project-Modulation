@@ -9,8 +9,9 @@ public class OSUtils {
 			OS = System.getProperty("os.name"); 
 		}
 		if(OS.startsWith("Mac")) {
-			System.setProperty("apple.awt.application.name", "Modulation");
+			System.setProperty("apple.awt.application.name", "Modulater");
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			;
 		}
 		return OS;
 	}
