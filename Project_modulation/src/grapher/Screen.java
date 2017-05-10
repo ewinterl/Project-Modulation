@@ -46,7 +46,7 @@ public class Screen extends Canvas {
 		case 1:
 			while (xval <= XMAX - DELTAX) {
 				if (mainFrame.isModulate()) {
-					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude()*Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude()*Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude()*Math.sin(xval*mainFrame.getFrequencyCarrier())*mainFrame.getAmplitudeCarrier()*Math.sin(xval*mainFrame.getFrequencyCarrier())*mainFrame.getAmplitudeCarrier();
 				} else {
 					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
 				}

@@ -105,6 +105,10 @@ public class MainFrame extends JFrame implements ModeChanger {
 	private int frequency;
 	private double amplitude = 1;
 	private boolean grid_on = false;
+	private int rangeCarrier = 1;
+	private double amplitudeCarrier = 1;
+	private int frequencyValCarrier = 1;
+	private int frequencyCarrier = 1;
 	
 	// Listeners
 	Button_Listener_MenuMode mListenerControl;
@@ -172,6 +176,8 @@ public class MainFrame extends JFrame implements ModeChanger {
 		jslid_freqCarrier.setSnapToTicks(true);
 		// radio buttons
 		// tool tip
+		rb_lowrange.setSelected(true);
+		rb_lowrangeCarrier.setSelected(true);
 		rb_lowrange.setToolTipText("Set the slider range to 1 - 10 Hz");
 		rb_midrange.setToolTipText("Set the slider range to 10 - 100 Hz");
 		rb_highrange.setToolTipText("Set the slider range to 100 - 1000 Hz");
@@ -183,6 +189,8 @@ public class MainFrame extends JFrame implements ModeChanger {
 		// slider
 		jslid_freq.addChangeListener(new SliderListener());
 		jslid_ampl.addChangeListener(new SliderListener());
+		jslid_amplCarrier.addChangeListener(new SliderListener());
+		jslid_freqCarrier.addChangeListener(new SliderListener());
 		// buttons
 		buttonSine.addActionListener(new ButtonListener());
 		buttonCosine.addActionListener(new ButtonListener());
@@ -190,6 +198,9 @@ public class MainFrame extends JFrame implements ModeChanger {
 		rb_midrange.addActionListener(new RadioButtonListener());
 		rb_highrange.addActionListener(new RadioButtonListener());
 		rb_grid.addActionListener(new RadioButtonListener());
+		rb_lowrangeCarrier.addActionListener(new RadioButtonListener());
+		rb_midrangeCarrier.addActionListener(new RadioButtonListener());
+		rb_highrangeCarrier.addActionListener(new RadioButtonListener());
 		// menu
 		mListenerControl = new Button_Listener_MenuMode(menuItemModeMod, menuItemModePlot, this);
 		mListenerLevel = new Button_Listener_MenuTwo();
@@ -242,7 +253,6 @@ public class MainFrame extends JFrame implements ModeChanger {
 		leftPanel.add(buttonCosine);
 
 		// top panel options
-		rb_lowrange.setSelected(true);
 		// top left
 		topLeftSignalPanel.add(new JLabel("<html><i>Frequency range: </i></html>"));
 		topLeftSignalPanel.add(rb_lowrange);
@@ -315,9 +325,12 @@ public class MainFrame extends JFrame implements ModeChanger {
 		public void stateChanged(ChangeEvent e) {
 			if (e.getSource() == jslid_freq) {
 				frequencyVal = jslid_freq.getValue();
-
-			} else {
+			} else if (e.getSource() == jslid_ampl) {
 				amplitude =	jslid_ampl.getValue()/100.00;
+			} else if (e.getSource() == jslid_freqCarrier) {
+				frequencyValCarrier = jslid_freqCarrier.getValue();
+			} else if (e.getSource() == jslid_amplCarrier) {
+				amplitudeCarrier = jslid_amplCarrier.getValue()/100.00;
 			}
 			redraw();
 		}
@@ -329,6 +342,15 @@ public class MainFrame extends JFrame implements ModeChanger {
 
 	public int getFrequency() {
 		return frequency;
+	}
+	
+	public double getAmplitudeCarrier() {
+		System.out.println(amplitudeCarrier);
+		return amplitudeCarrier;
+	}
+
+	public int getFrequencyCarrier() {
+		return frequencyCarrier;
 	}
 
 	public class ButtonListener implements ActionListener {
@@ -380,12 +402,28 @@ public class MainFrame extends JFrame implements ModeChanger {
 			} else{
 				grid_on = false;
 			}
+		} else if (ae.getSource() == rb_lowrangeCarrier) {
+			rb_lowrangeCarrier.setSelected(true);
+			rb_midrangeCarrier.setSelected(false);
+			rb_highrangeCarrier.setSelected(false);
+			rangeCarrier = 1;
+		} else if (ae.getSource() == rb_midrangeCarrier) {
+			rb_lowrangeCarrier.setSelected(false);
+			rb_midrangeCarrier.setSelected(true);
+			rb_highrangeCarrier.setSelected(false);
+			rangeCarrier = 10;
+		} else if (ae.getSource() == rb_highrangeCarrier) {
+			rb_lowrangeCarrier.setSelected(false);
+			rb_midrangeCarrier.setSelected(false);
+			rb_highrangeCarrier.setSelected(true);
+			rangeCarrier = 100;
 		}
 		redraw();
 	}
 
 	public void redraw() {
 		frequency = frequencyVal * range;
+		frequencyCarrier = frequencyValCarrier * rangeCarrier;
 		setAmplitudeLabel(amplitude);
 		setFrequencyLabel(frequency);
 		mainCanvas.repaint();
