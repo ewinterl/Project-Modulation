@@ -76,7 +76,7 @@ public class Drawing {
 		}
 	}
 
-	private void drawSingleLine(Graphics g, double x0, double y0, double x1, double y1) {	
+	private void drawSingleLine(Graphics2D g, double x0, double y0, double x1, double y1) {	
 		int xpix0 = xcoord_to_pixel(x0);
 		int xpix1 = xcoord_to_pixel(x1);
 		int ypix0 = ycoord_to_pixel(y0);
