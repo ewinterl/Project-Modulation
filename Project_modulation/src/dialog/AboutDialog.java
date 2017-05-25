@@ -14,13 +14,23 @@ import javax.swing.*;
 public class AboutDialog extends JDialog {
 
 	private JPanel contentPane;
+	private JPanel topPanel = new JPanel();
+	
+	private String version;
+	private String title;
+	
+	private JLabel versionLabel = new JLabel();
+	private JLabel titleLabel = new JLabel();
 
 	public AboutDialog (Frame parent, String title, boolean modal, String versionID) {
 		super (parent, "About " + title + " ...", modal);		// Modal dialog
 
+		this.title = title;
+		version = versionID;
+		
 		try {
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-			AboutDialogInit(versionID);
+			AboutDialogInit();
 			CenterDialog();
 		} catch (Exception exception) {
 			exception.printStackTrace();
@@ -29,10 +39,21 @@ public class AboutDialog extends JDialog {
 
 	}
 
-	private void AboutDialogInit(String versionID) throws Exception {
+	private void AboutDialogInit() throws Exception {
 		contentPane = (JPanel) getContentPane();
 		contentPane.setLayout(new BorderLayout());
-		this.setContentPane(contentPane);	
+		this.setContentPane(contentPane);
+		
+		topPanel.setLayout(new BorderLayout());
+		
+		titleLabel.setText("<html><b>" + title + "</b> </html>");
+		titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+		versionLabel.setText(version);
+		
+		topPanel.add(titleLabel, BorderLayout.NORTH);
+		topPanel.add(new JLabel ("Version:"));
+		topPanel.add(versionLabel, BorderLayout.SOUTH);
+		contentPane.add(topPanel, BorderLayout.NORTH);
 
 		setSize(new Dimension(300, 250));
 	}

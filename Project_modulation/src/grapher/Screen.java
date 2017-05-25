@@ -6,7 +6,7 @@ import modulation.MainFrame;
 
 
 public class Screen extends Canvas {
-	
+
 	// Canvas
 	private Drawing graphCanvas;
 	private static final int BORDER_PERCENTAGE = 5;
@@ -15,12 +15,12 @@ public class Screen extends Canvas {
 	private static final double DELTAX = Math.PI / 1000; 
 	private static final double YMIN = -1;
 	private static final double YMAX = 1; 
-	
+
 	// mainFrame
 	private MainFrame mainFrame;
 
 	private Drawing graph;
-	
+
 	Graphics2D g;
 
 	public Screen(MainFrame mainFrame) {
@@ -31,36 +31,54 @@ public class Screen extends Canvas {
 	}
 
 	public void paint(Graphics graphics) {
-		double xval, yval;
-		
+		double xval;
+		double yval;
+
 		g = (Graphics2D)graphics;
 		// draw the coordinate system
-		graphCanvas.draw_coord(g, mainFrame.isGrid_on());
+		graphCanvas.draw_coord(g, mainFrame.getCb_grid());
 
 		// draw a new line
 		graphCanvas.newLine();  // begin a new line
 		xval = 0.0;
-		
+
 		// selects the waveform
-		switch (mainFrame.getMode()) {
-		case 1:
-			while (xval <= XMAX - DELTAX) {
-				if (mainFrame.isModulate()) {
-					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude()*Math.sin(xval*mainFrame.getFrequencyCarrier())*mainFrame.getAmplitudeCarrier()*Math.sin(xval*mainFrame.getFrequencyCarrier())*mainFrame.getAmplitudeCarrier();
-				} else {
+		while (xval <= XMAX - DELTAX) {
+			if (mainFrame.isModulate()) {
+				switch (mainFrame.getMode()) {
+				case 0:
 					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+					break;
+				case 1:
+					yval = Math.cos(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+					break;
+				default:
+					yval = 0;
+					break;
 				}
-				graphCanvas.nextLine(g, xval, yval);
-				xval += DELTAX;
+				System.out.println(mainFrame.getModeCar());
+				switch (mainFrame.getModeCar()) {
+				case 0: 
+					yval *= Math.sin(xval*mainFrame.getFrequencyCarrier())*mainFrame.getAmplitudeCarrier();
+					break;
+				case 1: 
+					yval *= Math.cos(xval*mainFrame.getFrequencyCarrier())*mainFrame.getAmplitudeCarrier();
+				}
+			} else {
+				switch (mainFrame.getMode()) {
+				case 0:
+					yval = Math.sin(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+					break;
+				case 1:
+					yval = Math.cos(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
+					break;
+				default:
+					yval = 0;
+					break;
+				}
 			}
-			break;
-		case 2:
-			while (xval <= XMAX - DELTAX) {
-				yval = Math.cos(xval*mainFrame.getFrequency())*mainFrame.getAmplitude();
-				graphCanvas.nextLine(g, xval, yval);
-				xval += DELTAX;
-			}
-			break;
+			graphCanvas.nextLine(g, xval, yval);
+			xval += DELTAX;
 		}
 	}
 }

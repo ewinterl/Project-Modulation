@@ -1,4 +1,4 @@
-package mac;
+package os;
 
 import javax.swing.ImageIcon;
 
@@ -43,7 +43,7 @@ public class OSXSetup {
 			} 
 		});
 		
-		app.setDockIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon.png")).getImage());
+		app.setDockIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon_v3.png")).getImage());
 		app.setDockIconBadge("Mod");	
 	}
 
