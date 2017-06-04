@@ -27,7 +27,7 @@ public class SaveImage {
 		chooser.addChoosableFileFilter(filterPNG);
 	
 		if(chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
-			BufferedImage image=new BufferedImage(canvas.getWidth(), canvas.getHeight(),BufferedImage.TYPE_INT_ARGB);
+			BufferedImage image = new BufferedImage(canvas.getWidth(), canvas.getHeight(),BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2=(Graphics2D)image.getGraphics();
 			canvas.paint(g2);
 			try {
