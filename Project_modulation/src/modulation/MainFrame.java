@@ -172,12 +172,12 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 					KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		} else if (OS.indexOf("win") >= 0) {
 			// windows options
-
 			menuInfo.add(menuItemInfoAbout);
 			aboutDialog = new AboutDialog(this, title, true, versionID);
 			
 			mListenerHelp = new Button_Listener_MenuHelp(this);
 			menuItemInfoAbout.addActionListener(mListenerHelp);
+			
 		} else {
 			// Cross platform options
 			/*
@@ -187,6 +187,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 			 * AboutDialog(this, title, true, versionID);
 			 */
 		}
+		
 
 		contentPane = (JPanel) getContentPane();
 		contentPane.setLayout(new BorderLayout());
@@ -364,9 +365,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		buttonSine.doClick();
 		buttonSineCarrier.doClick();
 		
-		if (OS.indexOf("win") >= 0) {
-			buttonCosine.doClick();
-		}
 	}
 
 	public class SliderListener implements ChangeListener {

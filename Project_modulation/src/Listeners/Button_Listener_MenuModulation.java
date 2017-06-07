@@ -6,18 +6,10 @@ import java.awt.event.ActionListener;
 import dialog.AboutDialog;
 
 public class Button_Listener_MenuModulation implements ActionListener {
-	
-	// About dialog
-		AboutDialog aboutDialog;
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
-	public void actionPerformed(ActionEvent ae) {
-		menuHandlerThree(ae);
-	}
-	
-	/*
-	 * Handler for items in menu section RT
-	 */
-	private void menuHandlerThree (ActionEvent ae) {
-		aboutDialog.setVisible(true);
 	}
 }
