@@ -2,14 +2,10 @@ package modulation;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 
 import javax.swing.ButtonGroup;
@@ -30,28 +26,26 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import Listeners.Button_Listener_MenuFile;
-import Listeners.Button_Listener_MenuMode;
-import Listeners.Button_Listener_MenuThree;
+import Listeners.*;
+import dialog.AboutDialog;
 import grapher.Screen;
-import os.OSXSetup;
 
-public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
+public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutDialogMaker {
 	// Panels
 	private JPanel contentPane;
 	private JPanel topPanelSignal = new JPanel(); // top panel for controls
 	private JPanel topLeftSignalPanel = new JPanel(); // topLeft for freq range
 	private JPanel topMidSignalPanel = new JPanel(); // topMid for text
-	private JPanel topRightSignalPanel = new JPanel(); // topRight for sliders +
-	// grid
+	private JPanel topRightSignalPanel = new JPanel(); 		// topRight for sliders +
+															// grid
 	private JPanel leftPanel = new JPanel(); // left panel for functions
 	private JPanel textPanel = new JPanel(); // lower panel for text output
 	private JPanel topPanelCarrier = new JPanel(); // top panel for controls
-	private JPanel topLeftCarrierPanel = new JPanel(); // topLeft for freq range
-	// of modulating signal
+	private JPanel topLeftCarrierPanel = new JPanel();  // topLeft for freq range
+														// of modulating signal
 	private JPanel topMidCarrierPanel = new JPanel(); // topMid for text
 	private JPanel topRightCarrierPanel = new JPanel(); // topRight for sliders
-	// of modulating signal
+														// of modulating signal
 
 	// Labels
 	private JLabel functionName = new JLabel();
@@ -78,7 +72,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 	private JCheckBoxMenuItem menuItemModeMod = new JCheckBoxMenuItem("Modulator", true);
 	private JCheckBoxMenuItem menuItemModePlot = new JCheckBoxMenuItem("Plotter");
 	private JMenuItem menuItemFileSave = new JMenuItem("Save");
-	private JMenuItem menuItemInfoAbout = new JMenuItem("Windoof");
+	private JMenuItem menuItemInfoAbout = new JMenuItem("About");
 
 	// App info
 	private String OS;
@@ -98,10 +92,10 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 	// Radio Buttons
 	private ButtonGroup bg_rangeSignal = new ButtonGroup();
 	private ButtonGroup bg_rangeCarrier = new ButtonGroup();
-	private JRadioButton rb_lowrange = new JRadioButton("1Hz - 10Hz");
-	private JRadioButton rb_highrange = new JRadioButton("10Hz - 100Hz");
-	private JRadioButton rb_lowrangeCarrier = new JRadioButton("1Hz - 10Hz");
-	private JRadioButton rb_highrangeCarrier = new JRadioButton("10Hz - 100Hz");
+	private JRadioButton rb_lowrange = new JRadioButton("1 Hz - 10 Hz    ");
+	private JRadioButton rb_highrange = new JRadioButton("10 Hz - 100 Hz    ");
+	private JRadioButton rb_lowrangeCarrier = new JRadioButton("10 Hz - 100 Hz");
+	private JRadioButton rb_highrangeCarrier = new JRadioButton("100 Hz - 1000 Hz");
 
 	// Checkbox
 	private JCheckBox cb_grid = new JCheckBox("Display grid");
@@ -120,12 +114,16 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 
 	// Surroundings for Canvas
 	Screen mainCanvas;
-
+	
+	// dialogs
+	AboutDialog aboutDialog;
+	
+	
 	// Variables
 	private int mode = 0;
 	private int modeCar = 0;
 	private int range = 1;
-	private int rangeCarrier = 1;
+	private int rangeCarrier = 10;
 	private int frequencyVal = 1;
 	private int frequencyValCarrier = 1;
 
@@ -140,12 +138,11 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 	// Listeners
 	Button_Listener_MenuMode mListenerControl;
 	Button_Listener_MenuFile mListenerFile;
-	Button_Listener_MenuThree mListenerRT;
-
+	Button_Listener_MenuModulation mListenerMod;
+	Button_Listener_MenuHelp mListenerHelp;
+	
 	// Image
 	private SaveImage ImageSaver;
-
-	private GridBagConstraints gbc = new GridBagConstraints();
 
 	public MainFrame(String oS, String appTitle, String appVersion) {
 		OS = oS;
@@ -167,7 +164,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 	private void FrameInit() throws Exception {
 		// Mac OS specific options
 		if (OS.indexOf("mac") >= 0) {
-			new OSXSetup(title, versionID);
 			menuItemModeMod.setAccelerator(
 					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			menuItemModePlot.setAccelerator(
@@ -176,10 +172,12 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 					KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		} else if (OS.indexOf("win") >= 0) {
 			// windows options
-			/*
-			 * menuInfo.add(menuItemInfoAbout); aboutDialog = new
-			 * AboutDialog(this, title, true, versionID);
-			 */
+
+			menuInfo.add(menuItemInfoAbout);
+			aboutDialog = new AboutDialog(this, title, true, versionID);
+			
+			mListenerHelp = new Button_Listener_MenuHelp(this);
+			menuItemInfoAbout.addActionListener(mListenerHelp);
 		} else {
 			// Cross platform options
 			/*
@@ -202,7 +200,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		topMidSignalPanel.setLayout(new BorderLayout());
 		topRightSignalPanel.setLayout(new GridLayout(2, 2));
 		leftPanel.setLayout(new GridLayout(12, 1));
-		textPanel.setLayout(new GridLayout(2, 3));
+		textPanel.setLayout(new GridLayout(0, 3));
 		topLeftCarrierPanel.setLayout(new GridLayout(2, 2));
 		topMidCarrierPanel.setLayout(new BorderLayout());
 		topRightCarrierPanel.setLayout(new GridLayout(2, 2));
@@ -225,8 +223,8 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		rb_lowrangeCarrier.setSelected(true);
 		rb_lowrange.setToolTipText("Set the slider range to 1 - 10 Hz");
 		rb_highrange.setToolTipText("Set the slider range to 10 - 100 Hz");
-		rb_lowrangeCarrier.setToolTipText("Set the slider range to 1 - 10 Hz");
-		rb_highrangeCarrier.setToolTipText("Set the slider range to 10 - 100 Hz");
+		rb_lowrangeCarrier.setToolTipText("Set the slider range to 10 - 100 Hz");
+		rb_highrangeCarrier.setToolTipText("Set the slider range to 100 - 1000 Hz");
 		// button group
 		bg_rangeSignal.add(rb_lowrange);
 		bg_rangeSignal.add(rb_highrange);
@@ -263,30 +261,26 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		// menu
 		mListenerControl = new Button_Listener_MenuMode(menuItemModeMod, menuItemModePlot, this);
 		mListenerFile = new Button_Listener_MenuFile(menuItemFileSave, this);
-		mListenerRT = new Button_Listener_MenuThree();
-		menuItemInfoAbout.addActionListener(mListenerRT);
+		mListenerMod = new Button_Listener_MenuModulation();
+		menuItemInfoAbout.addActionListener(mListenerMod);
 		menuItemModeMod.addActionListener(mListenerControl);
 		menuItemModePlot.addActionListener(mListenerControl);
 		menuItemFileSave.addActionListener(mListenerFile);
 
-
 		// splitpane options
 		// main splitpane
-		// sp_main.add(sp_left, JSplitPane.LEFT);
 		sp_main.add(sp_bottom, JSplitPane.BOTTOM);
 		sp_main.add(sp_top, JSplitPane.TOP);
-		sp_main.setDividerLocation(150);
-		sp_main.setDividerSize(1); // delete divider
+		sp_main.setDividerSize(0); // delete divider
 		sp_main.setEnabled(false);
-		// right splitpane
+		// botom splitpane
 		sp_bottom.add(leftPanel, JSplitPane.LEFT);
 		sp_bottom.add(mainCanvas, JSplitPane.RIGHT);
 		sp_bottom.setDividerLocation(getHeight() / 4);
 		sp_bottom.setEnabled(false);
 		// top splitpane
-		sp_top.add(topPanelCarrier, JSplitPane.TOP);
-		sp_top.add(topPanelSignal, JSplitPane.BOTTOM);
-		sp_top.setDividerLocation(getHeight() / 8 - 3);
+		sp_top.add(topPanelSignal, JSplitPane.TOP);
+		sp_top.add(topPanelCarrier, JSplitPane.BOTTOM);
 		sp_top.setDividerSize(4); // make divider smaller
 		sp_top.setEnabled(false);
 
@@ -304,7 +298,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		leftPanel.add(cb_grid);
 		leftPanel.add(cb_fine);
 
-		// top panel options
+		// make signal panel
 		// top left
 		topLeftSignalPanel.add(new JLabel("<html><i>Frequency range: </i></html>"));
 		topLeftSignalPanel.add(rb_lowrange);
@@ -318,7 +312,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		topRightSignalPanel.add(new JLabel("<html><i>Amplitude trimmer</i></html>"));
 		topRightSignalPanel.add(jslid_ampl);
 
-		// carrier panel options
+		// make carrier panel
 		// top left
 		topLeftCarrierPanel.add(new JLabel("<html><i>Frequency range: </i></html>"));
 		topLeftCarrierPanel.add(rb_lowrangeCarrier);
@@ -332,16 +326,16 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		topRightCarrierPanel.add(new JLabel("<html><i>Amplitude trimmer</i></html>"));
 		topRightCarrierPanel.add(jslid_amplCarrier);
 
-		// add to top Signal
+		// signal panel
 		topPanelSignal.add(topLeftSignalPanel, BorderLayout.WEST);
 		topPanelSignal.add(topMidSignalPanel, BorderLayout.CENTER);
 		topPanelSignal.add(topRightSignalPanel, BorderLayout.EAST);
-		// add to top Carrier
+		// carrier panel
 		topPanelCarrier.add(topLeftCarrierPanel, BorderLayout.WEST);
 		topPanelCarrier.add(topMidCarrierPanel, BorderLayout.CENTER);
 		topPanelCarrier.add(topRightCarrierPanel, BorderLayout.EAST);
 
-		// text panel options
+		// make text panel
 		textPanel.add(functionName);
 		textPanel.add(frequencyLabel);
 		textPanel.add(amplitudeLabel);
@@ -369,6 +363,10 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		// draw a sine at start
 		buttonSine.doClick();
 		buttonSineCarrier.doClick();
+		
+		if (OS.indexOf("win") >= 0) {
+			buttonCosine.doClick();
+		}
 	}
 
 	public class SliderListener implements ChangeListener {
@@ -417,19 +415,19 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		buttonTriangle.setSelected(false);
 
 		if (src == buttonSine) {
-			functionName.setText("Function: sine");
+			functionName.setText("<html><b>Signal: sine</b></html>");
 			buttonSine.setSelected(true);
 			mode = 0;
 		} else if (src == buttonCosine) {
-			functionName.setText("Function: cosine");
+			functionName.setText("<html><b>Signal: cosine</b></html>");
 			buttonCosine.setSelected(true);
 			mode = 1;
 		} else if (src == buttonSawtooth) {
-			functionName.setText("Function: sawtooth");
+			functionName.setText("<html><b>Signal: sawtooth</b></html>");
 			buttonSawtooth.setSelected(true);
 			mode = 2;
 		} else if (src == buttonTriangle) {
-			functionName.setText("Function: triangle");
+			functionName.setText("<html><b>Signal: triangle</b></html>");
 			buttonTriangle.setSelected(true);
 			mode = 3;
 		}
@@ -451,19 +449,19 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 		buttonTriangleCarrier.setSelected(false);
 
 		if (src == buttonSineCarrier) {
-			functionNameCarrier.setText("Function: sine");
+			functionNameCarrier.setText("<html><i>Carrier: sine</i></html>");
 			buttonSineCarrier.setSelected(true);
 			modeCar = 0;
 		} else if (src == buttonCosineCarrier) {
-			functionNameCarrier.setText("Function: cosine");
+			functionNameCarrier.setText("<html><i>Carrier: cosine</i></html>");
 			buttonCosineCarrier.setSelected(true);
 			modeCar = 1;
 		} else if (src == buttonSawtoothCarrier) {
-			functionNameCarrier.setText("Function: sawtooth");
+			functionNameCarrier.setText("<html><i>Carrier: sawtooth</i></html>");
 			buttonSawtoothCarrier.setSelected(true);
 			modeCar = 2;
 		} else if (src == buttonTriangleCarrier) {
-			functionNameCarrier.setText("Function: triangle");
+			functionNameCarrier.setText("<html><i>Carrier: triangle</i></html>");
 			buttonTriangleCarrier.setSelected(true);
 			modeCar = 3;
 		}
@@ -489,9 +487,11 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 			} else if (ae.getSource() == rb_highrange) {
 				range = 10;
 			} else if (ae.getSource() == rb_lowrangeCarrier) {
-				rangeCarrier = 1;
-			} else if (ae.getSource() == rb_highrangeCarrier) {
+				jslid_freqCarrier.setMinimum(1);
 				rangeCarrier = 10;
+			} else if (ae.getSource() == rb_highrangeCarrier) {
+				jslid_freqCarrier.setMinimum(2);
+				rangeCarrier = 50;
 			}
 			redraw();
 		}
@@ -560,20 +560,20 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 	}
 
 	public void setAmplitudeLabel(double amplitude) {
-		amplitudeLabel.setText("Amplitude: " + amplitude);
+		amplitudeLabel.setText("<html><b>Signal Amplitude: " + amplitude + "</b></html>");
 	}
 
 	public void setFrequencyLabel(double frequency) {
-		frequencyLabel.setText("Frequency: " + frequency + " Hz");
+		frequencyLabel.setText("<html><b>Signal Frequency: " + frequency + " Hz</b></html>");
 	}
 
 	public void setFrequencyLabelCarrier(double frequencyCarrier) {
-		frequencyLabelCarrier.setText("Carrier frequency: " + frequencyCarrier + " Hz");
+		frequencyLabelCarrier.setText("<html><i>Carrier frequency: " + frequencyCarrier + " Hz</i></html>");
 		;
 	}
 
 	public void setAmplitudeLabelCarrier(double amplitudeCarrier) {
-		amplitudeLabelCarrier.setText("Carrier amplitude: " + amplitudeCarrier);
+		amplitudeLabelCarrier.setText("<html><i>Carrier amplitude: " + amplitudeCarrier + "</i></html>");
 	}
 
 	public boolean getCb_grid() {
@@ -582,44 +582,51 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver {
 
 	public void changeGUI() {
 		if (modulate == false) {
-			sp_top.remove(topPanelCarrier);
-			sp_top.setDividerSize(0);
-			sp_main.setDividerLocation(75);
-			sp_main.validate();
 			leftPanel.remove(signalLabelCarrierLeft);
 			leftPanel.remove(buttonSineCarrier);
 			leftPanel.remove(buttonCosineCarrier);
 			leftPanel.remove(buttonSawtoothCarrier);
 			leftPanel.remove(buttonTriangleCarrier);
+			leftPanel.revalidate();
 			leftPanel.repaint();
 			textPanel.remove(functionNameCarrier);
 			textPanel.remove(frequencyLabelCarrier);
 			textPanel.remove(amplitudeLabelCarrier);
-			textPanel.add(new JLabel(), 3);
-			textPanel.add(new JLabel(), 4);
-			textPanel.add(new JLabel(), 5);
+			textPanel.revalidate();
 			textPanel.repaint();
+			sp_main.setTopComponent(topPanelSignal);
+			sp_main.revalidate();
+			sp_main.repaint();
 		} else {
-			sp_top.setTopComponent(topPanelCarrier);
-			sp_main.setDividerLocation(150);
-			sp_main.validate();
-			sp_top.setDividerLocation(0.5);
-			sp_top.setDividerSize(5);
 			leftPanel.add(signalLabelCarrierLeft, 5);
 			leftPanel.add(buttonSineCarrier, 6);
 			leftPanel.add(buttonCosineCarrier, 7);
 			leftPanel.add(buttonSawtoothCarrier, 8);
 			leftPanel.add(buttonTriangleCarrier, 9);
+			leftPanel.revalidate();
 			leftPanel.repaint();
 			textPanel.add(functionNameCarrier, 3);
 			textPanel.add(frequencyLabelCarrier, 4);
 			textPanel.add(amplitudeLabelCarrier, 5);
+			textPanel.revalidate();
 			textPanel.repaint();
+			sp_top.setTopComponent(topPanelSignal);
+			sp_top.revalidate();
+			sp_top.repaint();
+			sp_main.setTopComponent(sp_top);
+			sp_main.revalidate();
+			sp_main.repaint();
 		}
 
 	}
 
 	public void saveImage() {
-		ImageSaver.Save();
+		ImageSaver.save();
+	}
+
+	@Override
+	public void showAbout() {
+		aboutDialog.setVisible(true);
+		
 	}
 }

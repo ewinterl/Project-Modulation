@@ -23,6 +23,10 @@ public class Drawing {
 	private int yLast;
 	// is set while drawing the axis
 	private boolean axis;
+	// vriable for grid / marks
+	private double xPos;
+	private double xMark;
+	private double yMark;
 
 	public Drawing(Component base, int border_percentage, double xmin, double xmax, double ymin, double ymax) {
 		this.base = base;
@@ -42,7 +46,7 @@ public class Drawing {
 		int pix_rand = (gesamtpixel * border_percentage) / 100;
 		int pix_zeichen = gesamtpixel - 2 * pix_rand;
 		int pix_gesamt;
-		
+
 		if (x_coord < xmin) {
 			return -1;
 		} else if (x_coord > xmax && axis == false) {
@@ -53,7 +57,7 @@ public class Drawing {
 			int pix = (int) Math.round((double) pix_zeichen * xcoord_relat / x_bereich);
 			pix_gesamt = pix_rand + pix;
 			return pix_gesamt;
-		}	
+		}
 	}
 
 	private int ycoord_to_pixel(double y_coord) {
@@ -61,8 +65,7 @@ public class Drawing {
 		int pix_rand = (gesamtpixel * border_percentage) / 100;
 		int pix_zeichen = gesamtpixel - 2 * pix_rand;
 		int pix_gesamt;
-		
-		
+
 		if (y_coord < ymin && axis == false) {
 			return -1;
 		} else if (y_coord > ymax && axis == false) {
@@ -76,7 +79,7 @@ public class Drawing {
 		}
 	}
 
-	private void drawSingleLine(Graphics2D g, double x0, double y0, double x1, double y1) {	
+	private void drawSingleLine(Graphics2D g, double x0, double y0, double x1, double y1) {
 		int xpix0 = xcoord_to_pixel(x0);
 		int xpix1 = xcoord_to_pixel(x1);
 		int ypix0 = ycoord_to_pixel(y0);
@@ -85,66 +88,67 @@ public class Drawing {
 		g.drawLine(xpix0, ypix0, xpix1, ypix1);
 	}
 
-	public void draw_coord(Graphics2D g, boolean grid) {
-		double xPos;
-		double xMark;
-		double yMark;
+	public void drawCoord(Graphics2D g) {
+		
 
 		g.setColor(Color.black);
-		
+
 		g.setStroke(new BasicStroke(2));
-		
+
 		// draw the coordinate system
 		// axis is used to draw a longer axis
 		axis = true;
-		drawSingleLine(g, 0.0, ymax+0.05, 0.0, ymin-0.05);
-		drawSingleLine(g, xmin, 0.0, xmax+0.2, 0.0);
+		drawSingleLine(g, 0.0, ymax + 0.05, 0.0, ymin - 0.05);
+		drawSingleLine(g, xmin, 0.0, xmax + 0.2, 0.0);
 		// draw right x axis arrow
-		drawSingleLine(g, xmax+0.05, 0.03, xmax+0.2, 0);
-		drawSingleLine(g, xmax+0.05, -0.03, xmax+0.2, 0);
+		drawSingleLine(g, xmax + 0.05, 0.03, xmax + 0.2, 0);
+		drawSingleLine(g, xmax + 0.05, -0.03, xmax + 0.2, 0);
 		// draw upper y axis arrow
-		drawSingleLine(g, 0, ymax+0.05, xmin+0.15, ymax+0.02);
-		drawSingleLine(g, 0, ymax+0.05, xmin+0.25, ymax+0.02);
+		drawSingleLine(g, 0, ymax + 0.05, xmin + 0.15, ymax + 0.02);
+		drawSingleLine(g, 0, ymax + 0.05, xmin + 0.25, ymax + 0.02);
 		// draw lower y axis arrow
-		drawSingleLine(g, 0, ymin-0.05, xmin+0.15, ymin-0.02);
-		drawSingleLine(g, 0, ymin-0.05, xmin+0.25, ymin-0.02);
+		drawSingleLine(g, 0, ymin - 0.05, xmin + 0.15, ymin - 0.02);
+		drawSingleLine(g, 0, ymin - 0.05, xmin + 0.25, ymin - 0.02);
 		axis = false;
+	}
+
+	public void drawGrid(Graphics2D g) {
+		g.setColor(Color.black);
+		g.setStroke(new BasicStroke(1));
 		
-		if (grid) {
-			// draw grid
-			g.setStroke(new BasicStroke(1));
-			xMark = (xmax - xmin) / 200.0;
-			drawSingleLine(g, -xMark, 1.0, xmax, 1.0);
-			drawSingleLine(g, -xMark, 0.5, xmax, 0.5);
-			drawSingleLine(g, -xMark, -0.5, xmax, -0.5);
-			drawSingleLine(g, -xMark, -1.0, xmax, -1.0);
-			yMark = (ymax - ymin) / 100.0;
-			xPos = Math.PI / 2.0;
-			while (xPos <= xmax) {
-				drawSingleLine(g, xPos, ymin, xPos, ymax);
-				if (xPos > 6 && xPos < 7) { 
-					g.drawString("2π", xcoord_to_pixel(xPos)-10, ycoord_to_pixel(yMark-ymax/10));
-				}
-				xPos += Math.PI / 2;
+		xMark = (xmax - xmin) / 200.0;
+		drawSingleLine(g, -xMark, 1.0, xmax, 1.0);
+		drawSingleLine(g, -xMark, 0.5, xmax, 0.5);
+		drawSingleLine(g, -xMark, -0.5, xmax, -0.5);
+		drawSingleLine(g, -xMark, -1.0, xmax, -1.0);
+		yMark = (ymax - ymin) / 100.0;
+		xPos = Math.PI / 2.0;
+		while (xPos <= xmax) {
+			drawSingleLine(g, xPos, ymin, xPos, ymax);
+			if (xPos > 6 && xPos < 7) {
+				g.drawString("2π", xcoord_to_pixel(xPos) - 10, ycoord_to_pixel(yMark - ymax / 10));
 			}
-		} else {
-			// draw the scaling marks
-			g.setStroke(new BasicStroke(2));
-			xMark = (xmax - xmin) / 200.0;
-			drawSingleLine(g, -xMark, 1.0, xMark, 1.0);
-			drawSingleLine(g, -xMark, 0.5, xMark, 0.5);
-			drawSingleLine(g, -xMark, -0.5, xMark, -0.5);
-			drawSingleLine(g, -xMark, -1.0, xMark, -1.0);
-			yMark = (ymax - ymin) / 100.0;
-			xPos = Math.PI / 2.0;
-			while (xPos < xmax) {
-				drawSingleLine(g, xPos, yMark, xPos, -yMark);
-				if (xPos > 6 && xPos < 7) { 
-					g.drawString("2π", xcoord_to_pixel(xPos)-10, ycoord_to_pixel(yMark-ymax/10));
-				}
-				xPos += Math.PI / 2;
+			xPos += Math.PI / 2;
+		}
+	}
+
+	public void drawMarks(Graphics2D g) {
+		g.setColor(Color.black);
+		g.setStroke(new BasicStroke(2));
+		
+		xMark = (xmax - xmin) / 200.0;
+		drawSingleLine(g, -xMark, 1.0, xMark, 1.0);
+		drawSingleLine(g, -xMark, 0.5, xMark, 0.5);
+		drawSingleLine(g, -xMark, -0.5, xMark, -0.5);
+		drawSingleLine(g, -xMark, -1.0, xMark, -1.0);
+		yMark = (ymax - ymin) / 100.0;
+		xPos = Math.PI / 2.0;
+		while (xPos < xmax) {
+			drawSingleLine(g, xPos, yMark, xPos, -yMark);
+			if (xPos > 6 && xPos < 7) {
+				g.drawString("2π", xcoord_to_pixel(xPos) - 10, ycoord_to_pixel(yMark - ymax / 10));
 			}
-			
+			xPos += Math.PI / 2;
 		}
 	}
 
@@ -157,9 +161,13 @@ public class Drawing {
 	public void nextLine(Graphics2D g, double x, double y) {
 		int x_pix = xcoord_to_pixel(x);
 		int y_pix = ycoord_to_pixel(y);
-		if (x_pix >= 0 && y_pix >= 0) {  // only draw if point is valid
+		if (x_pix >= 0 && y_pix >= 0) { // only draw if point is valid
 			g.setColor(Color.red);
-			if (linestart) {
+			/*
+			 *  dont draw a line from last point to the new one if a new signal is plotted 
+			 *  otherwise a line would be drawn across the screen
+			 */
+			if (linestart) {			
 				linestart = false;
 			} else {
 				g.setStroke(new BasicStroke(1));

@@ -31,6 +31,9 @@ public class OSXSetup {
 		aboutDialog = new AboutDialog(parent, title, modal, versionID);
 		preferencesDialog = new PreferencesDialog(parent, modal);
 		
+		System.setProperty("apple.awt.application.name", "Modulater");
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		
 		app.setPreferencesHandler(new PreferencesHandler() {
 			public void handlePreferences(PreferencesEvent pf) {
 				preferencesDialog.setVisible(true);
@@ -44,7 +47,6 @@ public class OSXSetup {
 		});
 		
 		app.setDockIconImage(new ImageIcon(getClass().getClassLoader().getResource("icon_v3.png")).getImage());
-		app.setDockIconBadge("Mod");	
 	}
 
 
