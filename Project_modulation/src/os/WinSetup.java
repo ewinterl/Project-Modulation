@@ -9,7 +9,7 @@ import modulation.MainFrame;
 public class WinSetup {
 	
 	public WinSetup() {
-		;
+		
 		
 		
 		

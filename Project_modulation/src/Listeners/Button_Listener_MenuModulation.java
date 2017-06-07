@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 
 import dialog.AboutDialog;
 
-public class Button_Listener_MenuThree implements ActionListener {
+public class Button_Listener_MenuModulation implements ActionListener {
 	
 	// About dialog
 		AboutDialog aboutDialog;

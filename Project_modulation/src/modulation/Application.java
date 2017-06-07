@@ -5,6 +5,8 @@ import java.awt.*;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import os.OSXSetup;
+
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -46,19 +48,19 @@ public class Application {
 	 */
 	public static void main(String[] args) throws InterruptedException, IOException {
 		String OS;
-		String title = "Modulater";
-		String versionID = "Version x";
+		String title = "Graphapp";
+		String versionID = "Version 0.9.2";
 
 		// detect current OS
-		new OSUtils();
-		OS = OSUtils.getOsName().toLowerCase();
+		OS = System.getProperty("os.name").toLowerCase();
+		System.out.println(OS);
+		if (OS.indexOf("mac") >= 0) {
+			new OSXSetup(title, versionID);
+		}
 
 		final SplashScreen splash = SplashScreen.getSplashScreen();
 		if (splash == null) {
 			System.out.println("SplashScreen.getSplashScreen() returned null");
-		} else {
-			Graphics2D g = splash.createGraphics();
-			//System.out.println(splash.equals(ImageIO.read(getClass().getResource("../Resources/splash_last.png"))));
 		}
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {

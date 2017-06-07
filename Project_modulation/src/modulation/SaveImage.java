@@ -3,10 +3,11 @@ package modulation;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.File;
+import java.io.IOException;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import modulation.ImageSaver;
 
 public class SaveImage {
 	private Component parent;
@@ -19,28 +20,32 @@ public class SaveImage {
 		this.canvas = canvas;
 	}
 
-	public void Save(){
+	public void save() {
+		
+		// may change to fileDialog
 		JFileChooser chooser = new JFileChooser();
 		FileNameExtensionFilter filterJPG = new FileNameExtensionFilter("JPG", "jpg");
-		FileNameExtensionFilter filterPNG = new FileNameExtensionFilter("PNG", "png" );
+		FileNameExtensionFilter filterPNG = new FileNameExtensionFilter("PNG", "png");
+		chooser.setFileFilter(filterPNG);
 		chooser.addChoosableFileFilter(filterJPG);
 		chooser.addChoosableFileFilter(filterPNG);
-	
-		if(chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
-			BufferedImage image=new BufferedImage(canvas.getWidth(), canvas.getHeight(),BufferedImage.TYPE_INT_ARGB);
-			Graphics2D g2=(Graphics2D)image.getGraphics();
+
+		if (chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
+			BufferedImage image = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			Graphics2D g2 = (Graphics2D) image.getGraphics();
 			canvas.paint(g2);
+
+			file = chooser.getSelectedFile();
+			fname = file.getName();
+			System.out.println(fname);
+			if (fname.contains("."))
+				fname = fname.substring(0, fname.lastIndexOf('.'));
+			
 			try {
-				file = chooser.getSelectedFile();
-				fname = file.getName();
-				if (fname.contains("."))
-					fname = fname.substring(0, fname.lastIndexOf('.'));
-				ImageIO.write(image, "png", new File(file + ".png"));
-				
-			} catch (Exception e) {
-				
+				ImageIO.write(image, "png", new File(chooser.getCurrentDirectory() + System.getProperty("file.separator") + fname + ".png"));
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
 }
-

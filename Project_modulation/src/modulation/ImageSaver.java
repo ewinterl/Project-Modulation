@@ -1,5 +1,5 @@
 package modulation;
 
 public interface ImageSaver {
-	public void saveImage ();
+	public void saveImage();
 }
