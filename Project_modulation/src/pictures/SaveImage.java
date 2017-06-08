@@ -1,4 +1,4 @@
-package modulation;
+package pictures;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -33,7 +33,16 @@ public class SaveImage {
 		if (chooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
 			BufferedImage image = new BufferedImage(canvas.getWidth(), canvas.getHeight(), BufferedImage.TYPE_INT_ARGB);
 			Graphics2D g2 = (Graphics2D) image.getGraphics();
+			/*
+			 * 
+			 * use for background
+			 * check for option to make transparent
+			 * 
+			 * g2.setColor(canvas.getBackground());
+			 * g2.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+			 */
 			canvas.paint(g2);
+			
 
 			file = chooser.getSelectedFile();
 			fname = file.getName();

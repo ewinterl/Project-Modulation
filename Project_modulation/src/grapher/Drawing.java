@@ -29,19 +29,12 @@ public class Drawing {
 	private double xPos;
 	private double xMark;
 	private double yMark;
-	
-	private int pix_rand;
-	
-	double[] xTriangle1 = new double[4];
-	double[] yTriangle1 = new double[4];
-	double[] xTriangle2 = new double[4];
-	double[] yTriangle2 = new double[4];
-	double[] xTriangle3 = new double[4];
-	double[] yTriangle3 = new double[4];
 
-	private Color gridcolor;
-	private Color functioncolor;
-	
+	private int pix_rand;
+
+	private Color gridColor = Color.black;
+	private Color graphColor = Color.red;
+
 	public Drawing(Component base, int border_percentage, double xmin, double xmax, double ymin, double ymax) {
 		this.base = base;
 		this.border_percentage = border_percentage;
@@ -57,12 +50,12 @@ public class Drawing {
 
 	private int xcoord_to_pixel(double x_coord) {
 		int gesamtpixel = base.getWidth();
-		pix_rand = (gesamtpixel * border_percentage) / 100;
-		int pix_zeichen = gesamtpixel - 2 * pix_rand;
+		int pix_zeichen;
 		int pix_gesamt;
 
+		pix_rand = (gesamtpixel * border_percentage) / 100;
+		pix_zeichen = gesamtpixel - 2 * pix_rand;
 		
-
 		if (x_coord < xmin) {
 			return -1;
 		} else if (x_coord > xmax && axis == false) {
@@ -78,11 +71,11 @@ public class Drawing {
 
 	private int ycoord_to_pixel(double y_coord) {
 		int gesamtpixel = base.getHeight();
-		pix_rand = (gesamtpixel * border_percentage) / 100;
-		int pix_zeichen = gesamtpixel - 2 * pix_rand;
+		int pix_zeichen;
 		int pix_gesamt;
-		
-		
+
+		pix_rand = (gesamtpixel * border_percentage) / 100;
+		pix_zeichen = gesamtpixel - 2 * pix_rand;
 
 		if (y_coord < ymin && axis == false) {
 			return -1;
@@ -98,15 +91,15 @@ public class Drawing {
 	}
 
 	private void drawSingleLine(Graphics2D g, double x0, double y0, double x1, double y1) {
-		g.setColor(gridcolor);
 		int xpix0 = xcoord_to_pixel(x0);
 		int xpix1 = xcoord_to_pixel(x1);
 		int ypix0 = ycoord_to_pixel(y0);
 		int ypix1 = ycoord_to_pixel(y1);
-
+		
+		g.setColor(gridColor);
 		g.drawLine(xpix0, ypix0, xpix1, ypix1);
 	}
-	
+
 	public void drawCoord(Graphics2D g) {
 		g.setStroke(new BasicStroke(2));
 
@@ -115,7 +108,7 @@ public class Drawing {
 		axis = true;
 		drawSingleLine(g, 0.0, ymax + 0.05, 0.0, ymin - 0.05);
 		drawSingleLine(g, xmin, 0.0, xmax + 0.2, 0.0);
-		
+
 		// draw right x axis arrow
 		drawSingleLine(g, xmax + 0.05, 0.03, xmax + 0.2, 0);
 		drawSingleLine(g, xmax + 0.05, -0.03, xmax + 0.2, 0);
@@ -125,13 +118,13 @@ public class Drawing {
 		// draw lower y axis arrow
 		drawSingleLine(g, 0, ymin - 0.05, xmin + 0.15, ymin - 0.02);
 		drawSingleLine(g, 0, ymin - 0.05, xmin + 0.25, ymin - 0.02);
-		
+
 		axis = false;
 	}
-	
+
 	public void drawGrid(Graphics2D g) {
 		g.setStroke(new BasicStroke(1));
-		
+
 		xMark = (xmax - xmin) / 200.0;
 		drawSingleLine(g, -xMark, 1.0, xmax, 1.0);
 		drawSingleLine(g, -xMark, 0.5, xmax, 0.5);
@@ -150,7 +143,7 @@ public class Drawing {
 
 	public void drawMarks(Graphics2D g) {
 		g.setStroke(new BasicStroke(2));
-		
+
 		xMark = (xmax - xmin) / 200.0;
 		drawSingleLine(g, -xMark, 1.0, xMark, 1.0);
 		drawSingleLine(g, -xMark, 0.5, xMark, 0.5);
@@ -168,16 +161,17 @@ public class Drawing {
 	}
 
 	// begin a new line
+	// -> dont draw from the back to the front
 	public void newLine() {
 		linestart = true;
 	}
 
-	// connect new point
+	// connect a new point
 	public void nextLine(Graphics2D g, double x, double y) {
 		int x_pix = xcoord_to_pixel(x);
 		int y_pix = ycoord_to_pixel(y);
+		
 		if (x_pix >= 0 && y_pix >= 0) { // only draw if point is valid
-			g.setColor(getFunktionColor);
 			/*
 			 *  don't draw a line from last point to the new one if a new signal is plotted 
 			 *  otherwise a line would be drawn across the screen
@@ -185,11 +179,20 @@ public class Drawing {
 			if (linestart) {			
 				linestart = false;
 			} else {
+				g.setColor(graphColor);
 				g.setStroke(new BasicStroke(1));
 				g.drawLine(xLast, yLast, x_pix, y_pix);
 			}
 			xLast = x_pix;
 			yLast = y_pix;
 		}
+	}
+
+	public void setGridcolor(Color gridcolor) {
+		this.gridColor = gridcolor;
+	}
+
+	public void setFunctioncolor(Color functioncolor) {
+		this.graphColor = functioncolor;
 	}
 }

@@ -1,13 +1,7 @@
 package modulation;
 
-<<<<<<< HEAD
-import java.awt.*;
-import java.awt.event.*;
-
-import javax.swing.*;
-import javax.swing.event.*;
-=======
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -33,11 +27,12 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
->>>>>>> origin/master
 
 import Listeners.*;
 import dialog.AboutDialog;
 import grapher.Screen;
+import os.OSXSetup;
+import pictures.SaveImage;
 
 public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutDialogMaker {
 	// Panels
@@ -122,7 +117,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	JSplitPane sp_top = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 
 	// Surroundings for Canvas
-	Screen mainCanvas;
+	Screen mainCanvas = new Screen(this);
 
 	// dialogs
 	AboutDialog aboutDialog;
@@ -173,6 +168,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	private void FrameInit() throws Exception {
 		// Mac OS specific options
 		if (OS.indexOf("mac") >= 0) {
+			new OSXSetup(title, versionID, mainCanvas);
 			menuItemModeMod.setAccelerator(
 					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			menuItemModePlot.setAccelerator(
@@ -217,7 +213,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		topMidCarrierPanel.setLayout(new BorderLayout());
 		topRightCarrierPanel.setLayout(new GridLayout(2, 2));
 
-		mainCanvas = new Screen(this);
 
 		// component options
 		// slider
@@ -375,7 +370,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		// draw a sine at start
 		buttonSine.doClick();
 		buttonSineCarrier.doClick();
-
 	}
 
 	public class SliderListener implements ChangeListener {
@@ -633,6 +627,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		ImageSaver.save();
 	}
 
+	@Override
 	public void showAbout() {
 		aboutDialog.setVisible(true);
 

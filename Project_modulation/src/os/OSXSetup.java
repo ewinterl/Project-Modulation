@@ -9,6 +9,8 @@ import com.apple.eawt.Application;
 import com.apple.eawt.PreferencesHandler;
 import dialog.AboutDialog;
 import dialog.PreferencesDialog;
+import grapher.ColorSetter;
+import grapher.Screen;
 
 
 /*
@@ -25,14 +27,11 @@ public class OSXSetup {
 	private AboutDialog aboutDialog;
 	private PreferencesDialog preferencesDialog;
 
-	public OSXSetup(String title, String versionID) { 
+	public OSXSetup(String title, String versionID, Screen screen) { 
 		Application app = Application.getApplication();
 	
 		aboutDialog = new AboutDialog(parent, title, modal, versionID);
-		preferencesDialog = new PreferencesDialog(parent, modal);
-		
-		System.setProperty("apple.awt.application.name", "Modulater");
-		System.setProperty("apple.laf.useScreenMenuBar", "true");
+		preferencesDialog = new PreferencesDialog(parent, modal, screen);
 		
 		app.setPreferencesHandler(new PreferencesHandler() {
 			public void handlePreferences(PreferencesEvent pf) {

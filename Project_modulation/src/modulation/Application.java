@@ -55,7 +55,8 @@ public class Application {
 		OS = System.getProperty("os.name").toLowerCase();
 		System.out.println(OS);
 		if (OS.indexOf("mac") >= 0) {
-			new OSXSetup(title, versionID);
+			System.setProperty("apple.awt.application.name", "Modulater");
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
 		}
 
 		final SplashScreen splash = SplashScreen.getSplashScreen();

@@ -5,7 +5,7 @@ import java.awt.*;
 import dialog.PreferencesDialog;
 import modulation.MainFrame;
 
-public class Screen extends Canvas {
+public class Screen extends Canvas implements ColorSetter {
 
 	// Canvas
 	private Drawing graphCanvas;
@@ -17,9 +17,13 @@ public class Screen extends Canvas {
 	private static final double YMIN = -1;
 	private static final double YMAX = 1;
 	private static final double PI = Math.PI;
-	//background color
-	private Color backgroundcolor;
-	
+	// background color
+	private Color backgroundColor = Color.white;
+	// graph color
+	private Color graphColor = Color.red;
+	// grid color
+	private Color gridColor = Color.black;
+
 	// mainFrame
 	private MainFrame mainFrame;
 
@@ -34,11 +38,7 @@ public class Screen extends Canvas {
 		//setBackground(Color.WHITE);
 		graphCanvas = new Drawing(this, BORDER_PERCENTAGE, XMIN, XMAX, YMIN, YMAX);
 	}
-	
-	public void getColors(){
-		this.backgroundcolor = PreferencesDialog.getBackgroundcolor();
-	}
-	
+
 	public void paint(Graphics graphics) {
 		double xval;
 		double yval;
@@ -49,7 +49,7 @@ public class Screen extends Canvas {
 		int inv = -1;
 
 		g = (Graphics2D) graphics;
-		setBackground(backgroundcolor);
+		setBackground(backgroundColor);
 		// draw a new line
 		graphCanvas.newLine(); // begin a new line
 		graphCanvas.drawCoord(g);
@@ -57,6 +57,12 @@ public class Screen extends Canvas {
 
 		period = 1 / mainFrame.getFrequency() * 2 * PI;
 		periodCar = 1 / mainFrame.getFrequencyCarrier() * 2 * PI;
+		
+		if (mainFrame.getCb_grid() == true) {
+			graphCanvas.drawGrid(g);
+		} else {
+			graphCanvas.drawMarks(g);
+		}
 
 		// selects the waveform
 		while (xval <= XMAX - DELTAX) {
@@ -111,14 +117,25 @@ public class Screen extends Canvas {
 					break;
 				}
 			}
-			
-			if (mainFrame.getCb_grid() == true) {
-			graphCanvas.drawGrid(g);
-			} else {
-			graphCanvas.drawMarks(g);
-			}
 			graphCanvas.nextLine(g, xval, yval);
 			xval += DELTAX;
 		}
 	}
+
+	public void setFunctionColor(Color color) {
+		graphCanvas.setFunctioncolor(color);
+		this.repaint();
+	}
+
+	public void setGridColor(Color color) {
+		graphCanvas.setGridcolor(color);
+		this.repaint();
+	}
+
+	public void setBackgroundColor(Color color) {
+		backgroundColor = color;
+		this.repaint();
+	}
+
+
 }
