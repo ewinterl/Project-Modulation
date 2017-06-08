@@ -6,7 +6,9 @@ import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-public class Drawing {
+import dialog.PreferencesDialog;
+
+public class Drawing implements ColorSetter {
 	// Surrounding of the painting
 	private Component base;
 	// Edge area
@@ -27,7 +29,19 @@ public class Drawing {
 	private double xPos;
 	private double xMark;
 	private double yMark;
+	
+	private int pix_rand;
+	
+	double[] xTriangle1 = new double[4];
+	double[] yTriangle1 = new double[4];
+	double[] xTriangle2 = new double[4];
+	double[] yTriangle2 = new double[4];
+	double[] xTriangle3 = new double[4];
+	double[] yTriangle3 = new double[4];
 
+	private Color gridcolor;
+	private Color functioncolor;
+	
 	public Drawing(Component base, int border_percentage, double xmin, double xmax, double ymin, double ymax) {
 		this.base = base;
 		this.border_percentage = border_percentage;
@@ -43,9 +57,11 @@ public class Drawing {
 
 	private int xcoord_to_pixel(double x_coord) {
 		int gesamtpixel = base.getWidth();
-		int pix_rand = (gesamtpixel * border_percentage) / 100;
+		pix_rand = (gesamtpixel * border_percentage) / 100;
 		int pix_zeichen = gesamtpixel - 2 * pix_rand;
 		int pix_gesamt;
+
+		
 
 		if (x_coord < xmin) {
 			return -1;
@@ -62,9 +78,11 @@ public class Drawing {
 
 	private int ycoord_to_pixel(double y_coord) {
 		int gesamtpixel = base.getHeight();
-		int pix_rand = (gesamtpixel * border_percentage) / 100;
+		pix_rand = (gesamtpixel * border_percentage) / 100;
 		int pix_zeichen = gesamtpixel - 2 * pix_rand;
 		int pix_gesamt;
+		
+		
 
 		if (y_coord < ymin && axis == false) {
 			return -1;
@@ -80,6 +98,7 @@ public class Drawing {
 	}
 
 	private void drawSingleLine(Graphics2D g, double x0, double y0, double x1, double y1) {
+		g.setColor(gridcolor);
 		int xpix0 = xcoord_to_pixel(x0);
 		int xpix1 = xcoord_to_pixel(x1);
 		int ypix0 = ycoord_to_pixel(y0);
@@ -87,12 +106,8 @@ public class Drawing {
 
 		g.drawLine(xpix0, ypix0, xpix1, ypix1);
 	}
-
+	
 	public void drawCoord(Graphics2D g) {
-		
-
-		g.setColor(Color.black);
-
 		g.setStroke(new BasicStroke(2));
 
 		// draw the coordinate system
@@ -100,6 +115,7 @@ public class Drawing {
 		axis = true;
 		drawSingleLine(g, 0.0, ymax + 0.05, 0.0, ymin - 0.05);
 		drawSingleLine(g, xmin, 0.0, xmax + 0.2, 0.0);
+		
 		// draw right x axis arrow
 		drawSingleLine(g, xmax + 0.05, 0.03, xmax + 0.2, 0);
 		drawSingleLine(g, xmax + 0.05, -0.03, xmax + 0.2, 0);
@@ -109,11 +125,11 @@ public class Drawing {
 		// draw lower y axis arrow
 		drawSingleLine(g, 0, ymin - 0.05, xmin + 0.15, ymin - 0.02);
 		drawSingleLine(g, 0, ymin - 0.05, xmin + 0.25, ymin - 0.02);
+		
 		axis = false;
 	}
-
+	
 	public void drawGrid(Graphics2D g) {
-		g.setColor(Color.black);
 		g.setStroke(new BasicStroke(1));
 		
 		xMark = (xmax - xmin) / 200.0;
@@ -133,7 +149,6 @@ public class Drawing {
 	}
 
 	public void drawMarks(Graphics2D g) {
-		g.setColor(Color.black);
 		g.setStroke(new BasicStroke(2));
 		
 		xMark = (xmax - xmin) / 200.0;
@@ -162,9 +177,9 @@ public class Drawing {
 		int x_pix = xcoord_to_pixel(x);
 		int y_pix = ycoord_to_pixel(y);
 		if (x_pix >= 0 && y_pix >= 0) { // only draw if point is valid
-			g.setColor(Color.red);
+			g.setColor(functioncolor);
 			/*
-			 *  dont draw a line from last point to the new one if a new signal is plotted 
+			 *  don't draw a line from last point to the new one if a new signal is plotted 
 			 *  otherwise a line would be drawn across the screen
 			 */
 			if (linestart) {			
@@ -176,5 +191,17 @@ public class Drawing {
 			xLast = x_pix;
 			yLast = y_pix;
 		}
+	}
+
+	public void setFunctionColor() {
+		
+	}
+
+	public void setGridColor() {
+		
+	}
+
+	public void setBackgroundColor() {
+		
 	}
 }

@@ -2,6 +2,7 @@ package grapher;
 
 import java.awt.*;
 
+import dialog.PreferencesDialog;
 import modulation.MainFrame;
 
 public class Screen extends Canvas {
@@ -16,7 +17,9 @@ public class Screen extends Canvas {
 	private static final double YMIN = -1;
 	private static final double YMAX = 1;
 	private static final double PI = Math.PI;
-
+	//background color
+	private Color backgroundcolor;
+	
 	// mainFrame
 	private MainFrame mainFrame;
 
@@ -28,10 +31,14 @@ public class Screen extends Canvas {
 	public Screen(MainFrame mainFrame) {
 		super();
 		this.mainFrame = mainFrame;
-		setBackground(Color.WHITE);
+		//setBackground(Color.WHITE);
 		graphCanvas = new Drawing(this, BORDER_PERCENTAGE, XMIN, XMAX, YMIN, YMAX);
 	}
-
+	
+	public void getColors(){
+		this.backgroundcolor = PreferencesDialog.getBackgroundcolor();
+	}
+	
 	public void paint(Graphics graphics) {
 		double xval;
 		double yval;
@@ -42,7 +49,7 @@ public class Screen extends Canvas {
 		int inv = -1;
 
 		g = (Graphics2D) graphics;
-
+		setBackground(backgroundcolor);
 		// draw a new line
 		graphCanvas.newLine(); // begin a new line
 		graphCanvas.drawCoord(g);
