@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 
 import dialog.PreferencesDialog;
 
-public class Drawing implements ColorSetter {
+public class Drawing {
 	// Surrounding of the painting
 	private Component base;
 	// Edge area
@@ -117,8 +117,8 @@ public class Drawing implements ColorSetter {
 		drawSingleLine(g, xmin, 0.0, xmax + 0.2, 0.0);
 		
 		// draw right x axis arrow
-		drawSingleLine(g, xmax + 0.12, 0.02, xmax + 0.2, 0);
-		drawSingleLine(g, xmax + 0.12, -0.02, xmax + 0.2, 0);
+		drawSingleLine(g, xmax + 0.05, 0.03, xmax + 0.2, 0);
+		drawSingleLine(g, xmax + 0.05, -0.03, xmax + 0.2, 0);
 		// draw upper y axis arrow
 		drawSingleLine(g, 0, ymax + 0.05, xmin + 0.15, ymax + 0.02);
 		drawSingleLine(g, 0, ymax + 0.05, xmin + 0.25, ymax + 0.02);
@@ -177,7 +177,7 @@ public class Drawing implements ColorSetter {
 		int x_pix = xcoord_to_pixel(x);
 		int y_pix = ycoord_to_pixel(y);
 		if (x_pix >= 0 && y_pix >= 0) { // only draw if point is valid
-			g.setColor(functioncolor);
+			g.setColor(getFunktionColor);
 			/*
 			 *  don't draw a line from last point to the new one if a new signal is plotted 
 			 *  otherwise a line would be drawn across the screen
@@ -191,17 +191,5 @@ public class Drawing implements ColorSetter {
 			xLast = x_pix;
 			yLast = y_pix;
 		}
-	}
-
-	public void setFunctionColor() {
-		
-	}
-
-	public void setGridColor() {
-		
-	}
-
-	public void setBackgroundColor() {
-		
 	}
 }
