@@ -23,6 +23,7 @@ import javax.swing.JSlider;
 import javax.swing.JSplitPane;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -37,15 +38,15 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	private JPanel topLeftSignalPanel = new JPanel(); // topLeft for freq range
 	private JPanel topMidSignalPanel = new JPanel(); // topMid for text
 	private JPanel topRightSignalPanel = new JPanel(); 		// topRight for sliders +
-															// grid
+	// grid
 	private JPanel leftPanel = new JPanel(); // left panel for functions
 	private JPanel textPanel = new JPanel(); // lower panel for text output
 	private JPanel topPanelCarrier = new JPanel(); // top panel for controls
 	private JPanel topLeftCarrierPanel = new JPanel();  // topLeft for freq range
-														// of modulating signal
+	// of modulating signal
 	private JPanel topMidCarrierPanel = new JPanel(); // topMid for text
 	private JPanel topRightCarrierPanel = new JPanel(); // topRight for sliders
-														// of modulating signal
+	// of modulating signal
 
 	// Labels
 	private JLabel functionName = new JLabel();
@@ -114,11 +115,11 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 
 	// Surroundings for Canvas
 	Screen mainCanvas;
-	
+
 	// dialogs
 	AboutDialog aboutDialog;
-	
-	
+
+
 	// Variables
 	private int mode = 0;
 	private int modeCar = 0;
@@ -140,7 +141,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	Button_Listener_MenuFile mListenerFile;
 	Button_Listener_MenuModulation mListenerMod;
 	Button_Listener_MenuHelp mListenerHelp;
-	
+
 	// Image
 	private SaveImage ImageSaver;
 
@@ -174,10 +175,12 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 			// windows options
 			menuInfo.add(menuItemInfoAbout);
 			aboutDialog = new AboutDialog(this, title, true, versionID);
-			
+			UIManager.setLookAndFeel(UIManager.
+					getCrossPlatformLookAndFeelClassName());
+
 			mListenerHelp = new Button_Listener_MenuHelp(this);
 			menuItemInfoAbout.addActionListener(mListenerHelp);
-			
+
 		} else {
 			// Cross platform options
 			/*
@@ -187,7 +190,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 			 * AboutDialog(this, title, true, versionID);
 			 */
 		}
-		
+
 
 		contentPane = (JPanel) getContentPane();
 		contentPane.setLayout(new BorderLayout());
@@ -364,7 +367,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		// draw a sine at start
 		buttonSine.doClick();
 		buttonSineCarrier.doClick();
-		
+
 	}
 
 	public class SliderListener implements ChangeListener {
@@ -625,6 +628,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	@Override
 	public void showAbout() {
 		aboutDialog.setVisible(true);
-		
+
 	}
 }

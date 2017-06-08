@@ -101,8 +101,8 @@ public class Drawing {
 		drawSingleLine(g, 0.0, ymax + 0.05, 0.0, ymin - 0.05);
 		drawSingleLine(g, xmin, 0.0, xmax + 0.2, 0.0);
 		// draw right x axis arrow
-		drawSingleLine(g, xmax + 0.05, 0.03, xmax + 0.2, 0);
-		drawSingleLine(g, xmax + 0.05, -0.03, xmax + 0.2, 0);
+		drawSingleLine(g, xmax + 0.12, 0.02, xmax + 0.2, 0);
+		drawSingleLine(g, xmax + 0.12, -0.02, xmax + 0.2, 0);
 		// draw upper y axis arrow
 		drawSingleLine(g, 0, ymax + 0.05, xmin + 0.15, ymax + 0.02);
 		drawSingleLine(g, 0, ymax + 0.05, xmin + 0.25, ymax + 0.02);
