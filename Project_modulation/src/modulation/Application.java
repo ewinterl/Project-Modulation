@@ -49,7 +49,7 @@ public class Application {
 	public static void main(String[] args) throws InterruptedException, IOException {
 		String OS;
 		String title = "Graphapp";
-		String versionID = "Version 0.9.2";
+		String versionID = "0.9.2.1 (Pre-Alpha)";
 
 		// detect current OS
 		OS = System.getProperty("os.name").toLowerCase();

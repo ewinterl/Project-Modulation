@@ -34,18 +34,18 @@ import grapher.Screen;
 import os.OSXSetup;
 import pictures.SaveImage;
 
-public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutDialogMaker {
+public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutDialogMaker, AlphaSetter {
 	// Panels
 	private JPanel contentPane;
 	private JPanel topPanelSignal = new JPanel(); // top panel for controls
 	private JPanel topLeftSignalPanel = new JPanel(); // topLeft for freq range
 	private JPanel topMidSignalPanel = new JPanel(); // topMid for text
-	private JPanel topRightSignalPanel = new JPanel(); 		// topRight for sliders +
+	private JPanel topRightSignalPanel = new JPanel(); // topRight for sliders +
 	// grid
 	private JPanel leftPanel = new JPanel(); // left panel for functions
 	private JPanel textPanel = new JPanel(); // lower panel for text output
 	private JPanel topPanelCarrier = new JPanel(); // top panel for controls
-	private JPanel topLeftCarrierPanel = new JPanel();  // topLeft for freq range
+	private JPanel topLeftCarrierPanel = new JPanel(); // topLeft for freq range
 	// of modulating signal
 	private JPanel topMidCarrierPanel = new JPanel(); // topMid for text
 	private JPanel topRightCarrierPanel = new JPanel(); // topRight for sliders
@@ -69,14 +69,17 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	// Menu
 	private JMenu menuFile = new JMenu("File");
 	private JMenu menuMode = new JMenu("Mode");
-	private JMenu menuLevel = new JMenu("Modulation");
+	private JMenu menuModulation = new JMenu("Modulation");
 	private JMenu menuInfo = new JMenu("Help");
 
 	// Submenu
 	private JCheckBoxMenuItem menuItemModeMod = new JCheckBoxMenuItem("Modulator", true);
 	private JCheckBoxMenuItem menuItemModePlot = new JCheckBoxMenuItem("Plotter");
+	private JCheckBoxMenuItem menuItemModAM = new JCheckBoxMenuItem("Amplitudemodulation", true);
+	private JCheckBoxMenuItem menuItemModFM = new JCheckBoxMenuItem("Frequencymodulation");
 	private JMenuItem menuItemFileSave = new JMenuItem("Save");
 	private JMenuItem menuItemInfoAbout = new JMenuItem("About");
+	private JMenuItem menuItemInfoDoc = new JMenuItem("Documentation");
 
 	// App info
 	private String OS;
@@ -122,7 +125,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	// dialogs
 	AboutDialog aboutDialog;
 
-
 	// Variables
 	private int mode = 0;
 	private int modeCar = 0;
@@ -130,6 +132,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	private int rangeCarrier = 10;
 	private int frequencyVal = 1;
 	private int frequencyValCarrier = 1;
+	private int modulation = 0; // 0 ... AM ; 1 ... FM
 
 	private double frequency = 1;
 	private double amplitude = 1;
@@ -138,6 +141,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 
 	private boolean modulate = true;
 	private boolean fine = false;
+	private boolean alpha = false;
 
 	// Listeners
 	Button_Listener_MenuMode mListenerControl;
@@ -168,19 +172,20 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	private void FrameInit() throws Exception {
 		// Mac OS specific options
 		if (OS.indexOf("mac") >= 0) {
-			new OSXSetup(title, versionID, mainCanvas);
+			new OSXSetup(title, versionID, mainCanvas, this);
 			menuItemModeMod.setAccelerator(
 					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			menuItemModePlot.setAccelerator(
 					KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 			menuItemFileSave.setAccelerator(
 					KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			menuItemModAM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			menuItemModFM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		} else if (OS.indexOf("win") >= 0) {
 			// windows options
 			menuInfo.add(menuItemInfoAbout);
 			aboutDialog = new AboutDialog(this, title, true, versionID);
-			UIManager.setLookAndFeel(UIManager.
-					getCrossPlatformLookAndFeelClassName());
+			UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
 
 			mListenerHelp = new Button_Listener_MenuHelp(this);
 			menuItemInfoAbout.addActionListener(mListenerHelp);
@@ -194,7 +199,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 			 * AboutDialog(this, title, true, versionID);
 			 */
 		}
-
 
 		contentPane = (JPanel) getContentPane();
 		contentPane.setLayout(new BorderLayout());
@@ -212,7 +216,6 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		topLeftCarrierPanel.setLayout(new GridLayout(2, 2));
 		topMidCarrierPanel.setLayout(new BorderLayout());
 		topRightCarrierPanel.setLayout(new GridLayout(2, 2));
-
 
 		// component options
 		// slider
@@ -268,11 +271,14 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		// menu
 		mListenerControl = new Button_Listener_MenuMode(menuItemModeMod, menuItemModePlot, this);
 		mListenerFile = new Button_Listener_MenuFile(menuItemFileSave, this);
-		mListenerMod = new Button_Listener_MenuModulation();
+		mListenerMod = new Button_Listener_MenuModulation(menuItemModAM, menuItemModFM, this);
 		menuItemInfoAbout.addActionListener(mListenerMod);
 		menuItemModeMod.addActionListener(mListenerControl);
 		menuItemModePlot.addActionListener(mListenerControl);
 		menuItemFileSave.addActionListener(mListenerFile);
+		menuItemModAM.addActionListener(mListenerMod);
+		menuItemModFM.addActionListener(mListenerMod);
+		//menuItemInfoDoc.addActionListener(l);
 
 		// splitpane options
 		// main splitpane
@@ -355,12 +361,16 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		// add Menu
 		menuBar.add(menuFile);
 		menuBar.add(menuMode);
-		menuBar.add(menuLevel);
+		menuBar.add(menuModulation);
 		menuBar.add(menuInfo);
 		// add Submenu
 		menuMode.add(menuItemModeMod);
 		menuMode.add(menuItemModePlot);
 		menuFile.add(menuItemFileSave);
+		menuModulation.add(menuItemModAM);
+		menuModulation.add(menuItemModFM);
+		menuInfo.addSeparator();
+		menuInfo.add(menuItemInfoDoc);
 
 		contentPane.add(sp_main, BorderLayout.CENTER);
 		contentPane.add(textPanel, BorderLayout.SOUTH);
@@ -554,7 +564,14 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		} else if (Menu == menuItemModePlot) {
 			menuItemModeMod.setSelected(false);
 			modulate = false;
+		} else if (Menu == menuItemModAM) {
+			menuItemModFM.setSelected(false);
+			modulation = 0;
+		} else if (Menu == menuItemModFM) {
+			menuItemModAM.setSelected(false);
+			modulation = 1;
 		}
+		mainCanvas.setModulation(modulation);
 		redraw();
 	}
 
@@ -585,11 +602,14 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 
 	public void changeGUI() {
 		if (modulate == false) {
-			leftPanel.remove(signalLabelCarrierLeft);
-			leftPanel.remove(buttonSineCarrier);
-			leftPanel.remove(buttonCosineCarrier);
-			leftPanel.remove(buttonSawtoothCarrier);
-			leftPanel.remove(buttonTriangleCarrier);
+			leftPanel.removeAll();
+			leftPanel.add(signalLabelLeft);
+			leftPanel.add(buttonSine);
+			leftPanel.add(buttonCosine);
+			leftPanel.add(buttonSawtooth);
+			leftPanel.add(buttonTriangle);
+			leftPanel.add(cb_grid);
+			leftPanel.add(cb_fine);
 			leftPanel.revalidate();
 			leftPanel.repaint();
 			textPanel.remove(functionNameCarrier);
@@ -600,14 +620,32 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 			sp_main.setTopComponent(topPanelSignal);
 			sp_main.revalidate();
 			sp_main.repaint();
+			menuModulation.setEnabled(false);
 		} else {
-			leftPanel.add(signalLabelCarrierLeft, 5);
-			leftPanel.add(buttonSineCarrier, 6);
-			leftPanel.add(buttonCosineCarrier, 7);
-			leftPanel.add(buttonSawtoothCarrier, 8);
-			leftPanel.add(buttonTriangleCarrier, 9);
-			leftPanel.revalidate();
-			leftPanel.repaint();
+			menuModulation.setEnabled(true);
+			leftPanel.removeAll();
+			leftPanel.add(signalLabelLeft);
+			leftPanel.add(buttonSine);
+			leftPanel.add(buttonCosine);
+			if (modulation == 0) {
+				leftPanel.add(buttonSawtooth);
+				leftPanel.add(buttonTriangle);
+			} 
+			leftPanel.add(signalLabelCarrierLeft);
+			leftPanel.add(buttonSineCarrier);
+			leftPanel.add(buttonCosineCarrier);
+			if (modulation == 1) {
+				leftPanel.add(cb_grid);
+				leftPanel.add(cb_fine);
+			}
+			if (modulation == 0) {
+				leftPanel.add(buttonSawtoothCarrier);
+				leftPanel.add(buttonTriangleCarrier);
+				leftPanel.add(cb_grid);
+				leftPanel.add(cb_fine);
+				leftPanel.revalidate();
+				leftPanel.repaint();
+			}
 			textPanel.add(functionNameCarrier, 3);
 			textPanel.add(frequencyLabelCarrier, 4);
 			textPanel.add(amplitudeLabelCarrier, 5);
@@ -620,16 +658,18 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 			sp_main.revalidate();
 			sp_main.repaint();
 		}
-
 	}
 
 	public void saveImage() {
-		ImageSaver.save();
+		ImageSaver.save(alpha);
 	}
 
-	@Override
 	public void showAbout() {
 		aboutDialog.setVisible(true);
 
+	}
+
+	public void setAlpha(boolean alpha) {
+		this.alpha = alpha;
 	}
 }
