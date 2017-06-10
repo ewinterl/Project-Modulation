@@ -48,8 +48,8 @@ public class Application {
 	 */
 	public static void main(String[] args) throws InterruptedException, IOException {
 		String OS;
-		String title = "Graphapp";
-		String versionID = "0.9.2.1 (Pre-Alpha)";
+		String title = "GraphApp";
+		String versionID = "0.9.3 (Pre-Alpha)";
 
 		// detect current OS
 		OS = System.getProperty("os.name").toLowerCase();

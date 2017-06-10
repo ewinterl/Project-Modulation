@@ -96,8 +96,6 @@ public class PreferencesDialog extends JDialog {
 		}
 
 		public class Editor extends JPanel implements ChangeListener {
-			private int preferredWidth = 30;
-			private int preferredHeight = 16;
 			private Color color;
 
 			public Editor(JSpinner spinner) {
@@ -108,7 +106,6 @@ public class PreferencesDialog extends JDialog {
 				}
 
 				spinner.addChangeListener(this);
-				setPreferredSize(new Dimension(preferredWidth, preferredHeight));
 				setBackground(color);
 			}
 
@@ -142,8 +139,6 @@ public class PreferencesDialog extends JDialog {
 					this.setBackground(color);
 				} catch (Exception e) {
 				}
-
-
 			}
 		}
 

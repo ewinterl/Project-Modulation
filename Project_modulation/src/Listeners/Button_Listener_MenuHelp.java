@@ -25,5 +25,6 @@ public class Button_Listener_MenuHelp implements ActionListener {
 	 */
 	private void menuHandlerHelp (ActionEvent ae) {
 		about.showAbout();
+		
 	}
 }

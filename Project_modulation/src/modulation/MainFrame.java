@@ -148,6 +148,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 	Button_Listener_MenuFile mListenerFile;
 	Button_Listener_MenuModulation mListenerMod;
 	Button_Listener_MenuHelp mListenerHelp;
+	Button_Listener_MenuManual mListenerManual;
 
 	// Image
 	private SaveImage ImageSaver;
@@ -173,14 +174,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		// Mac OS specific options
 		if (OS.indexOf("mac") >= 0) {
 			new OSXSetup(title, versionID, mainCanvas, this);
-			menuItemModeMod.setAccelerator(
-					KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-			menuItemModePlot.setAccelerator(
-					KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-			menuItemFileSave.setAccelerator(
-					KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-			menuItemModAM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
-			menuItemModFM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+			
 		} else if (OS.indexOf("win") >= 0) {
 			// windows options
 			menuInfo.add(menuItemInfoAbout);
@@ -203,7 +197,7 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		contentPane = (JPanel) getContentPane();
 		contentPane.setLayout(new BorderLayout());
 		setMinimumSize(new Dimension(900, 600));
-		setTitle("Modulation Demo");
+		setTitle("GraphApp");
 
 		// set layout
 		topPanelSignal.setLayout(new BorderLayout());
@@ -272,12 +266,21 @@ public class MainFrame extends JFrame implements ModeChanger, ImageSaver, AboutD
 		mListenerControl = new Button_Listener_MenuMode(menuItemModeMod, menuItemModePlot, this);
 		mListenerFile = new Button_Listener_MenuFile(menuItemFileSave, this);
 		mListenerMod = new Button_Listener_MenuModulation(menuItemModAM, menuItemModFM, this);
+		mListenerManual = new Button_Listener_MenuManual(menuItemInfoDoc, this);
 		menuItemInfoAbout.addActionListener(mListenerMod);
 		menuItemModeMod.addActionListener(mListenerControl);
 		menuItemModePlot.addActionListener(mListenerControl);
 		menuItemFileSave.addActionListener(mListenerFile);
 		menuItemModAM.addActionListener(mListenerMod);
 		menuItemModFM.addActionListener(mListenerMod);
+		menuItemInfoDoc.addActionListener(mListenerManual);
+		
+		menuItemModeMod.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemModePlot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemFileSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemModAM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemModFM.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
+		menuItemInfoDoc.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_D, Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));
 		//menuItemInfoDoc.addActionListener(l);
 
 		// splitpane options
