@@ -37,7 +37,7 @@ public class Button_Listener_MenuManual implements ActionListener{
 				InputStream inputPdf = getClass().getClassLoader().getResourceAsStream("GraphApp.pdf");
 
 	            try {
-	                File pdfTemp = new File("GraphApp.pdf");
+	                File pdfTemp = new File("temporär.pdf");
 	               
 	                FileOutputStream fileos = new FileOutputStream(pdfTemp);
 	                while (inputPdf.available() > 0) {
