@@ -18,15 +18,15 @@ public class PreferencesDialog extends JDialog {
 	private JPanel contentPane = new JPanel(new BorderLayout());
 	private JPanel preferencesPane = new JPanel(new GridLayout(4, 2));
 
-	private JLabel color_label_function = new JLabel("Select function color");
-	private JLabel color_label_grid = new JLabel("Select grid color");
-	private JLabel color_label_background = new JLabel("Select background color");
-	private JLabel colorText = new JLabel("Colors: black, red, yellow, green, cyan, blue, white");
+	private JLabel color_label_function = new JLabel("Function color:");
+	private JLabel color_label_grid = new JLabel("Grid color:");
+	private JLabel color_label_background = new JLabel("Background color");
+	private JLabel colorText = new JLabel("Colors: black, red, yellow, green, cyan, blue, magenta, white");
 
 	private ColorSetter cs;
 	private AlphaSetter as;
 
-	private String Colors[] = new String[]{ "black", "red", "yellow", "green", "cyan", "blue", "white" };
+	private String Colors[] = new String[]{ "black", "red", "yellow", "green", "cyan", "blue", "magenta", "white" };
 
 	private ColorSpinner csp_functioncolor = new ColorSpinner(Colors);
 	private ColorSpinner csp_gridcolor = new ColorSpinner(Colors);
@@ -35,6 +35,8 @@ public class PreferencesDialog extends JDialog {
 	private java.lang.reflect.Field field;
 
 	private JRadioButton saveAlpha = new JRadioButton("Save with alpha");
+	
+	private Dimension prefSize = new Dimension(575, 250);
 
 	public PreferencesDialog(Frame parent, boolean modal, Screen screen, MainFrame mf) {
 		super(parent, "Preferences", modal);
@@ -43,7 +45,7 @@ public class PreferencesDialog extends JDialog {
 		as = mf;
 		csp_functioncolor.setValue(Colors[1]);
 		csp_gridcolor.setValue(Colors[0]);
-		csp_backgroundcolor.setValue(Colors[6]);
+		csp_backgroundcolor.setValue(Colors[7]);
 
 		try {
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -58,9 +60,11 @@ public class PreferencesDialog extends JDialog {
 	private void PreferenceDialogInit() throws Exception {
 		contentPane = (JPanel) getContentPane();
 		this.setContentPane(contentPane);
-		setSize(new Dimension(600, 300));
+		this.setSize(prefSize);
+		this.setMinimumSize(prefSize);
+		this.setMaximumSize(prefSize);
 		
-		colorText.setFont(new Font("light", 100, 10));
+		colorText.setFont(new Font("light", 10, 9));
 
 		saveAlpha.addActionListener(new ButtonListener());
 
@@ -73,6 +77,14 @@ public class PreferencesDialog extends JDialog {
 		preferencesPane.add(saveAlpha);
 		preferencesPane.add(colorText);
 		contentPane.add(preferencesPane);
+		
+		setToolTip();
+	}
+
+	private void setToolTip() {
+		csp_functioncolor.setToolTipText("Select the color of the graph");
+		csp_gridcolor.setToolTipText("Select the color of grid lines");
+		csp_backgroundcolor.setToolTipText("Select the backgroundcolor");
 	}
 
 	private void CenterDialog() {

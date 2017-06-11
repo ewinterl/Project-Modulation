@@ -66,7 +66,7 @@ public class AboutDialog extends JDialog {
 
 		titleLabel.setText("<html>   <h1>" + title + "<h1></html>");
 		versionLabel.setText("   Version: " + version);
-		aboutText.setText("<html>    <em>GraphApp is an app that lets you draw various functions.<br>"
+		aboutText.setText("<html><em>GraphApp is an app that lets you draw various functions.<br>"
 				+ "Furthermore, it can calculate different ways modulation.<br>"
 				+ "Read the documentation for help and more infos.</em><br>"
 				+ "<i>(Help -> Documentation)</i></html>");
